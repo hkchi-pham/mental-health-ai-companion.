@@ -42,11 +42,11 @@ To design and develop a **psychologically informed**, **culturally relevant**, a
 
 | Layer               | Tools/Libraries                                      |
 |--------------------|------------------------------------------------------|
-| Frontend (Mobile)  | Flutter, Lottie, Firebase, Hive/SQLite               |
-| AI & NLP           | Dialogflow CX / Rasa / HuggingFace Transformers, PhoBERT |
-| Backend            | Firebase / Supabase / Flask (optional)              |
-| Emotion Detection  | Custom model with PhoBERT or pretrained API         |
-| Deployment         | Android + Web (PWA)                                 |
+| Frontend (Mobile)  | React Native                                        |
+| AI & NLP           | OpenAI, HuggingFace                                 |
+| Backend            | FastAPI                                             |
+| Database           | SQLModel, PostgreSQL                                |
+| Deployment         | Android + IOS mobile                                |
 
 ---
 
