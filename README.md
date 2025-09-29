@@ -36,7 +36,7 @@ To design and develop a **psychologically informed**, **culturally relevant**, a
 - **Mood Check-in & Streak Tracker** – log emotions daily, earn XP
 - **Breathing Rhythm Tap Game** – calm down through guided breathing
 - **Affirmation Reframe Game** – transform negative thoughts
-- **Micro-Journal** – express thoughts privately
+- **Journal** – express thoughts privately or publicly(Stage 2 - building platform)
 - **Virtual Fantasy Garden** – plant growth reflects emotional progress
 
 ---
