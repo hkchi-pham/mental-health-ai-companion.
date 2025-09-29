@@ -1,12 +1,30 @@
 from sqlmodel import Session, select
 from app.models.UserModel import UserModel
-from app.response.UserResponse import UserCreate, UserUpdate
-
-
+from app.response.UserResponse import UserCreate, UserUpdate, UserLogin
 from app import utils
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def get_password_hash(password: str) -> str: # ENCRYPT
+    """Hash password"""
+    return pwd_context.hash(password)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool: # CHECK FOR CORRECT PASSWORD
+    """Verify password"""
+    return pwd_context.verify(plain_password, hashed_password)
+
+# trc khi thêm 
+def authenticate_user(db: Session, data: UserLogin):
+    user = db.query(UserModel).filter(UserModel.username == data.user_name).first()
+    if not user or not verify_password(data.password, user.hashed_password):
+        return None
+    return True
 
 def create_user(db: Session, data: UserCreate):
-    user = UserModel(**data.dict())
+    # lưu ý: change password các hth lớn thường sẽ check password, password ph tuân theo một rule nhất định
+    # add thêm pass word đã hash vào hashed_password=get_password_hash(password)
+    user = UserModel(**data.dict(), password=get_password_hash(data.password))
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -57,7 +75,7 @@ def delete_user(db: Session, user_id: str) -> bool:
         return False
 
     user.deleted_at = utils.get_current_time()
-    db.delete(user)
+    db.add(user) # SOFT DELETE
     db.commit()
     return True
 
