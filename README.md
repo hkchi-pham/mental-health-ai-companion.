@@ -1,8 +1,9 @@
 # 🌱 Fantasy Garden – Mental Health AI Companion for Teens
 
-**Fantasy Garden** is a bilingual (Vietnamese/English) AI-powered mental health app designed for Vietnamese high school students (ages 12–16). It offers a warm, gamified space to nurture emotional well-being, featuring a friendly AI chatbot companion and interactive mini-games that promote self-care and resilience.
+**Fantasy Garden** is a bilingual (Vietnamese/English) AI-powered mental health app designed for Vietnamese high school students. It offers a warm, gamified space to nurture emotional well-being, featuring a friendly AI chatbot companion and interactive mini-games that promote self-care and resilience.
 
-> 🧠 Built as part of my personal project and university application portfolio to Oxford, UCL, and ICL. Duration: 1 year.  
+> 🧠 Built as part of my personal project and university application portfolio.
+> Duration: 1 year.  
 
 ---
 
@@ -17,11 +18,19 @@ To design and develop a **psychologically informed**, **culturally relevant**, a
 
 ## ✨ Core Features
 
-### 🧑‍💬 AI Chatbot Companion (Single Persona)
-- Empathetic, adaptive character with evolving dialogue
-- Daily conversations, mental health check-ins, personalized support
-- Emotion recognition from Vietnamese text input
-- Learns user preferences over time
+### 🧑‍💬 AI Chatbot Companion (3 Persona)
+1. Listener:
+   - Empathetic, emotional recognition and validation
+   - Create a sense of presence and understanding
+2. Peers:
+   - Casual chatting and encouragement like a close friend
+   - Create a sense of companion and motivating
+3. Mentor:
+   - Coping guidance by giving out wise advice on emotion recognition and regulation
+   - Create a sense of direction and guidance
+4. Overall:
+   - Daily conversations, mental health check-ins, personalized support
+
 
 ### 🎮 Mini-Games & Tools
 - **Mood Check-in & Streak Tracker** – log emotions daily, earn XP
