@@ -13,8 +13,13 @@ class UserBase(SQLModel): #common field shared across schema
     avatar: Optional[str] = None 
 
 class UserCreate(UserBase): # create new user
+    email: str
     password: str
-
+    
+class UserLogin(SQLModel):
+    user_name: str
+    password: str
+    
 class UserRead(UserBase): # read user from DB
     id: str
     
@@ -41,4 +46,5 @@ class UserUpdate(SQLModel): # schema for updating user's data
     phone: Optional[str] = None
     address: Optional[str] = None
     avatar: Optional[str] = None
+
     password: Optional[str] = None
