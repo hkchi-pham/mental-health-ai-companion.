@@ -1,0 +1,47 @@
+services:
+  api:
+    build: .
+    ports:
+      - 8081:80
+    volumes:
+      - ./app:/app
+    restart: always
+    env_file:
+      - .env
+  db:
+    container_name: postgres
+    image: postgres:17
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+      - PGTZ=Asia/Ho_Chi_Minh
+      - POSTGRES_USER=hkchi-p
+      - POSTGRES_PASSWORD=abc123
+      - PGDATA=/data/postgres
+    volumes:
+      - db:/data/postgres
+    ports:
+      - "5332:5432"
+    networks:
+      - db
+    restart: unless-stopped
+  pgadmin:
+    container_name: pgadmin_container_backend_template
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    ports:
+      - "${PGADMIN_PORT:-5051}:80"
+    restart: unless-stopped
+
+  
+    networks:
+      - db
+
+    # command: /bin/bash -c "until pg_isready -U hkchi-p -p 5432; do sleep 1; done; psql -U hkchi-p -c 'CREATE DATABASE bank;'"
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:
