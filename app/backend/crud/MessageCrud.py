@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 from typing import List, Optional
-from app.models.MessageModel import MessageModel
-from app.response.MessageResponse import MessageCreate
+from backend.models.MessageModel import MessageModel
+from backend.response.MessageResponse import MessageCreate
 
 
 def create_message(session: Session, data: MessageCreate):

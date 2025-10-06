@@ -1,8 +1,8 @@
 from sqlmodel import Session, select
 from typing import List, Optional
-from app.models.ConversationModel import ConversationModel
-from app.response.ConversationResponse import ConversationCreate, ConversationUpdate
-from app import utils
+from backend.models.ConversationModel import ConversationModel
+from backend.response.ConversationResponse import ConversationCreate, ConversationUpdate
+from backend import utils
 
 def create_conversation(session: Session, data: ConversationCreate):
     conv = ConversationModel(**data.dict())

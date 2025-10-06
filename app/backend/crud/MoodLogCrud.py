@@ -1,8 +1,8 @@
 from sqlmodel import Session, select
 from typing import List, Optional
-from app.models.MoodLogModel import MoodLogModel
-from app.response.MoodLogResponse import MoodLogCreate, MoodLogUpdate
-from app import utils
+from backend.models.MoodLogModel import MoodLogModel
+from backend.response.MoodLogResponse import MoodLogCreate, MoodLogUpdate
+from backend import utils
 
 def create_mood_log(session: Session, data: MoodLogCreate):
     mood_log = MoodLogModel(**data.dict())

@@ -1,8 +1,12 @@
 from sqlmodel import Session, select
-from app.models.UserModel import UserModel
-from app.response.UserResponse import UserCreate, UserUpdate, UserLogin
-from app import utils
+from backend.models.UserModel import UserModel
+from backend.response.UserResponse import UserCreate, UserUpdate, UserLogin
+from backend import utils
 from passlib.context import CryptContext
+from sqlalchemy import func
+from config.database import get_db
+from fastapi import HTTPException, status, Depends
+from fastapi.encoders import jsonable_encoder
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -16,35 +20,61 @@ def verify_password(plain_password: str, hashed_password: str) -> bool: # CHECK 
 
 # trc khi thêm 
 def authenticate_user(db: Session, data: UserLogin):
-    user = db.query(UserModel).filter(UserModel.username == data.user_name).first()
+    print("start auth")
+    user = db.query(UserModel).filter(UserModel.user_name == data.user_name).first()
+    print(data.password)
+    print(verify_password(data.password, user.hashed_password))
+    print(user)
     if not user or not verify_password(data.password, user.hashed_password):
         return None
     return True
 
+def check_user_name_exist(db: Session, user_name: str):
+
+    user = db.query(UserModel).filter(UserModel.user_name == user_name).first()
+    print(user)
+    if user:
+        return True
+    return False
+
+
 def create_user(db: Session, data: UserCreate):
     # lưu ý: change password các hth lớn thường sẽ check password, password ph tuân theo một rule nhất định
     # add thêm pass word đã hash vào hashed_password=get_password_hash(password)
-    user = UserModel(**data.dict(), password=get_password_hash(data.password))
+    print(111)
+    user = UserModel(**data.dict(), hashed_password=get_password_hash(data.password))
+    print("234")
     db.add(user)
+    print(345)
     db.commit()
+    print("acbde")
     db.refresh(user)
+    print("12345")
     return True
 
-def get_user_by_id(db: Session, user_id: str):
-    return db.get(UserModel, user_id)
+def get_user_by_user_name(db: Session, user_name: str):
+    user = db.query(UserModel).filter(UserModel.user_name == user_name, UserModel.deleted_at.is_(None)).first()
+    print(user)
+    if user:
+        return user
+    return None
 
-def get_all_user(db: Session, page: int = 1, page_size: int = 10):
+
+def get_all_user(db: Session = Depends(get_db), page: int = 1, page_size: int = 10):
     # tổng số record
-    total = db.exec(select(UserModel)).count()
+    stmt = select(func.count()).select_from(UserModel).where(
+            UserModel.deleted_at.is_(None)
+        )
+    total = db.exec(stmt).first() or 0  # luôn int, kể cả khi 0
 
-    # lấy danh sách theo phân trang
+    # lấy danh sách
     statement = select(UserModel).offset((page - 1) * page_size).limit(page_size)
     items = db.exec(statement).all()
 
-    total_pages = (total + page_size - 1) // page_size  # làm tròn lên
+    total_pages = (total + page_size - 1) // page_size if total > 0 else 0
 
     return {
-        "items": items,
+        "items": jsonable_encoder(items),  # ✅ serialize an toàn
         "total": total,
         "page": page,
         "page_size": page_size,
@@ -53,6 +83,7 @@ def get_all_user(db: Session, page: int = 1, page_size: int = 10):
 
 def update_user(db: Session, user_id: str, data: UserUpdate):
     user = db.get(UserModel, user_id)
+    print(user)
     if not user:
         return None
     update_data = data.dict(exclude_unset=True)
@@ -64,12 +95,16 @@ def update_user(db: Session, user_id: str, data: UserUpdate):
     return True
 
 def delete_user(db: Session, user_id: str) -> bool:
+    print("start delete user")
     user = db.exec(
         select(UserModel).where(
             UserModel.id == user_id,
             UserModel.deleted_at.is_(None)
         )
     ).first()
+
+    print(user)
+    
 
     if not user:
         return False

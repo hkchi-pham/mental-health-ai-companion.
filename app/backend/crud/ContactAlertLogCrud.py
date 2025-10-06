@@ -1,8 +1,8 @@
 from sqlmodel import Session, select
 from typing import List, Optional
-from app.models.ContactAlertLogModel import ContactAlertLogModel
-from app.response.ContactAlertLogResponse import ContactAlertLogCreate, ContactAlertLogUpdate
-from app import utils
+from backend.models.ContactAlertLogModel import ContactAlertLogModel
+from backend.response.ContactAlertLogResponse import ContactAlertLogCreate, ContactAlertLogUpdate
+from backend import utils
 
 def create_contact_alert(session: Session, data: ContactAlertLogCreate):
     contact_alert_log = ContactAlertLogModel(**data.dict())

@@ -1,12 +1,12 @@
 from typing import Generic, TypeVar, List, Optional
-from sqlmodel import SQLModel
+from sqlmodel import SQLModel, Field
 
 T = TypeVar("T")
 
 # endpoints that return a list of item
 class PaginatedResponse(SQLModel, Generic[T]):
     message: str # status message or code
-    data: List[T] #list of actual results (users, satellites, etc.).
+    data: List[T]  = Field(default_factory=list) #list of actual results (users, satellites, etc.).
     total: int # total number of records in DB
     page: int # current page number
     page_size: int # how many items per page

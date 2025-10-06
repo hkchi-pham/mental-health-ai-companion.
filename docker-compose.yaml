@@ -8,6 +8,11 @@ services:
     restart: always
     env_file:
       - .env
+    networks:
+      - db
+    depends_on:
+      - db
+      
   db:
     container_name: postgres
     image: postgres:17
@@ -24,6 +29,7 @@ services:
     networks:
       - db
     restart: unless-stopped
+    
   pgadmin:
     container_name: pgadmin_container_backend_template
     image: dpage/pgadmin4
@@ -33,12 +39,9 @@ services:
     ports:
       - "${PGADMIN_PORT:-5051}:80"
     restart: unless-stopped
-
-  
     networks:
       - db
 
-    # command: /bin/bash -c "until pg_isready -U hkchi-p -p 5432; do sleep 1; done; psql -U hkchi-p -c 'CREATE DATABASE bank;'"
 networks:
   db:
     driver: bridge

@@ -1,10 +1,10 @@
-from fastapi import APIRouter, HTTPException, Depends, Body, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Body
 from sqlmodel import Session
-from typing import Optional
-from app.config.database import get_db
-from app.response.UserResponse import UserCreate, UserUpdate, UserResponse
-from app.response.CommonResponse import SuccessResponse, PaginatedResponse, ErrorResponse, MessageCode
-from app.crud import UserCrud as crud
+from typing import List
+from config.database import get_db
+from backend.response.UserResponse import UserCreate, UserUpdate, UserResponse
+from backend.response.CommonResponse import SuccessResponse, PaginatedResponse, ErrorResponse, MessageCode
+from backend.crud import UserCrud as crud
 
 router = APIRouter(
     prefix="/users",
@@ -12,23 +12,23 @@ router = APIRouter(
 )
 
 @router.post("/", 
-             response_model=SuccessResponse[UserResponse], 
+            #  response_model=SuccessResponse[UserResponse], 
              responses={500: {"model": ErrorResponse}}
-             # dependencies=[Depends(KiemTraQuyen("quan_ly_co_so_them"))]
             )
 def create_user(
     data: UserCreate = Body(...),
     db: Session = Depends(get_db)
 ):
     try:
+        if check_user_name_exist(db, data.user_name):
+            return HTTPException(status_code=500, detail=MessageCode.USER_ALREADY_EXISTS.value)
         result = crud.create_user(db, data)
-        # return SuccessResponse[UserResponse](message="Tạo cơ sở thành công", data=result)
         return HTTPException(status_code=200, detail=MessageCode.CREATE_USER_SUCCESSFULLY.value)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=MessageCode.CREATE_USER_FAILED.value)
+        raise HTTPException(status_code=500, detail=MessageCode.USER_ALREADY_EXISTS.value)
 
 @router.get("/", 
-            response_model=PaginatedResponse[UserResponse], 
+            # response_model=PaginatedResponse[UserResponse], 
             responses={404: {"model": ErrorResponse}, 500: {"model": ErrorResponse}}, 
             # dependencies=[Depends(KiemTraQuyen("quan_ly_co_so_xem"))]
         )
@@ -40,10 +40,8 @@ def get_all_user(
 ):
     try:
         result = crud.get_all_user(db, page=page, page_size=page_size)
-        if not result or not result["items"]:
-            raise HTTPException(status_code=404, detail="Không tìm thấy cơ sở nào")
         return PaginatedResponse[UserResponse](
-            message="Lấy danh sách cơ sở thành công",
+            message="",
             data=result["items"],
             total=result["total"],
             page=result["page"],
@@ -51,11 +49,30 @@ def get_all_user(
             total_pages=result["total_pages"]
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Lỗi khi lấy danh sách cơ sở: {str(e)}")
+        raise HTTPException(status_code=500, detail="")
 
-@router.put("/{user_id}", response_model=SuccessResponse[UserResponse], 
+
+@router.get("/{user_name}", response_model = SuccessResponse[UserResponse],
             responses={404: {"model": ErrorResponse}, 500: {"model": ErrorResponse}}
-            # dependencies=[Depends(KiemTraQuyen("quan_ly_co_so_sua"))]
+        )
+def get_user_by_user_name(
+    user_name: str,
+    db: Session = Depends(get_db)
+):
+    try:
+        result = crud.get_user_by_user_name(db, user_name)
+        if result == None:
+            return HTTPException(status_code=404, detail=MessageCode.USER_NOT_FOUND.value)
+        return SuccessResponse[UserResponse](
+            message=MessageCode.GET_USER_SUCCESSFULLY.value,
+            data=result
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="")
+
+
+@router.put("/{user_id}", 
+            responses={404: {"model": ErrorResponse}, 500: {"model": ErrorResponse}}
         )
 def update_user(
     user_id: str,
@@ -64,24 +81,25 @@ def update_user(
 ):
     try:
         result = crud.update_user(db, user_id, data)
-        if not result:
-            raise HTTPException(status_code=404, detail="Cơ sở không tồn tại")
-        # return SuccessResponse[CoSoResponse](message="Cập nhật cơ sở thành công", data=result)
         return HTTPException(status_code=200, detail=MessageCode.UPDATE_USER_SUCCESSFULLY.value)
     except Exception as e:
         raise HTTPException(status_code=500, detail=MessageCode.UPDATE_USER_FAILED.value)
 
+
 @router.delete("/{user_id}", 
                response_model=SuccessResponse[dict], 
                responses={404: {"model": ErrorResponse}, 500: {"model": ErrorResponse}}
-               # dependencies=[Depends(KiemTraQuyen("quan_ly_co_so_xoa"))]
+               
             )
 def delete_user(user_id: str, db: Session = Depends(get_db)):
     try:
+        print(user_id)
         result = crud.delete_user(db, user_id)
         if not result:
-            raise HTTPException(status_code=404, detail=MessageCode.USER_NOT_FOUND.value)
-        # return SuccessResponse[dict](message="Xoá cơ sở thành công", data=None)
+            return HTTPException(status_code=409, detail=MessageCode.USER_NOT_FOUND.value)
+        print(result)
         return HTTPException(status_code=200, detail=MessageCode.DELETE_USER_SUCCESSFULLY.value)
     except Exception as e:
         raise HTTPException(status_code=500, detail=MessageCode.DELETE_USER_FAILED.value)
+
+    # tạo ra một user rồi tự động thêm cho nó 1 đoạn chat default để lựa chọn con bot default. 

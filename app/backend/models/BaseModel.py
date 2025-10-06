@@ -10,7 +10,7 @@ class BaseModel(SQLModel):
     """
     __abstract__ = True
 
-    id: str = Field(default_factory=str(uuid.uuid4()), index=True, unique=True, primary_key=True)
+    id: str = Field(default_factory=generate_uuid, index=True, unique=True, primary_key=True)
     created_at: str = Field(default_factory=get_current_time)
     updated_at: Optional[str] = Field(default_factory=get_current_time)
     deleted_at: Optional[datetime] = Field(default=None, nullable=True)

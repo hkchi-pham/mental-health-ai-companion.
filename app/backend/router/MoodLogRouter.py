@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 from typing import List
-from app.config.database import get_db
-from app.crud import MoodLogCrud
-from app.response.MoodLogResponse import (
+from config.database import get_db
+from backend.crud import MoodLogCrud
+from backend.response.MoodLogResponse import (
     MoodLogCreate,
     MoodLogRead,
     MoodLogUpdate,
     MoodLogResponse,
 )
-from app.response.CommonResponse import SuccessResponse, MessageCode, ErrorResponse
+from backend.response.CommonResponse import SuccessResponse, MessageCode, ErrorResponse
 
 router = APIRouter(
     prefix="/mood_logs", 
@@ -23,7 +23,7 @@ router = APIRouter(
 def create_mood_log(data: MoodLogCreate, session: Session = Depends(get_db)):
     try:
         mood_log = MoodLogCrud.create_mood_log(session, data)
-        raise HTTPException(status_code=200, detail=MessageCode.CREATE_MOOD_LOG_SUCCESSFULLY.value)
+        return HTTPException(status_code=200, detail=MessageCode.CREATE_MOOD_LOG_SUCCESSFULLY.value)
     except Exception as e:
         raise HTTPException(status_code=500, detail=MessageCode.CREATE_MOOD_LOG_FAILED.value)
 
@@ -36,8 +36,8 @@ def get_all_mood_log(session: Session = Depends(get_db)):
     try:
         result =  MoodLogCrud.get_all_mood_logs(session,page=1,page_size=10)
         if not result:
-            raise HTTPException(status_code=404, detail=MessageCode.MOOD_LOG_NOT_FOUND.value)
-        raise HTTPException(status_code=200, detail=MessageCode.GET_MOOD_LOG_SUCCESSFULLY.value)
+            return HTTPException(status_code=404, detail=MessageCode.MOOD_LOG_NOT_FOUND.value)
+        return HTTPException(status_code=200, detail=MessageCode.GET_MOOD_LOG_SUCCESSFULLY.value)
     except Exception as e:
         raise HTTPException(status_code=500, detail=MessageCode.GET_MOOD_LOG_FAILED.value)
 
@@ -50,8 +50,8 @@ def get_mood_log(mood_log_id: str, session: Session = Depends(get_db)):
     try: 
         conv = MoodLogCrud.get_mood_log_by_id(session, mood_log_id)
         if not conv:
-            raise HTTPException(status_code=404, detail=MessageCode.MOOD_LOG_NOT_FOUND.value)
-        raise HTTPException(status_code=200, detail=MessageCode.GET_MOOD_LOG_SUCCESSFULLY.value)
+            return HTTPException(status_code=404, detail=MessageCode.MOOD_LOG_NOT_FOUND.value)
+        return HTTPException(status_code=200, detail=MessageCode.GET_MOOD_LOG_SUCCESSFULLY.value)
     except Exception as e:
         raise HTTPException(status_code=500, detail=MessageCode.GET_MOOD_LOG_FAILED.value)
         
@@ -66,8 +66,8 @@ def update_mood_log(mood_log_id: str, data: MoodLogUpdate, session: Session = De
     try: 
         mood_log = MoodLogCrud.update_mood_log(session,mood_log_id,data,)
         if not mood_log:
-            raise HTTPException(status_code=404, detail=MessageCode.MOOD_LOG_NOT_FOUND.value)
-        raise HTTPException(status_code=200, detail=MessageCode.UPDATE_MOOD_LOG_SUCCESSFULLY.value)
+            return HTTPException(status_code=404, detail=MessageCode.MOOD_LOG_NOT_FOUND.value)
+        return HTTPException(status_code=200, detail=MessageCode.UPDATE_MOOD_LOG_SUCCESSFULLY.value)
     except Exception as e:
         raise HTTPException(status_code=500, detail=MessageCode.UPDATE_MOOD_LOG_FAILED.value)
 
@@ -80,7 +80,7 @@ def delete_mood_log(mood_log_id: str, session: Session = Depends(get_db)):
     try: 
         success = MoodLogCrud.delete_mood_log(session, mood_log_id)
         if not success:
-            raise HTTPException(status_code=404, detail=MessageCode.MOOD_LOG_NOT_FOUND)
-        raise HTTPException(status_code=200, detail=MessageCode.DELETE_MOOD_LOG_SUCCESSFULLY.value)
+            return HTTPException(status_code=404, detail=MessageCode.MOOD_LOG_NOT_FOUND)
+        return HTTPException(status_code=200, detail=MessageCode.DELETE_MOOD_LOG_SUCCESSFULLY.value)
     except Exception as e:
         raise HTTPException(status_code=500, detail=MessageCode.DELETE_MOOD_LOG_FAILED.value)
