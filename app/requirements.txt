@@ -1,8 +1,35 @@
-fastapi
-uvicorn
-sqlalchemy
 pymysql
-python-multipart
 python-dotenv
-cryptography 
 SQLModel
+# FastAPI và dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Database
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9  # PostgreSQL driver
+alembic==1.12.1  # Database migrations
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==3.2.2
+python-multipart==0.0.6
+
+
+# Environment variables
+python-dotenv==1.0.0
+
+# Validation
+pydantic[email]==2.5.0
+
+# CORS
+fastapi-cors==0.0.6
+
+# Development dependencies (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2  # For testing FastAPI
+
+# Production server (optional)
+gunicorn==21.2.0

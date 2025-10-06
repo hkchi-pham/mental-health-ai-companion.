@@ -3,13 +3,18 @@ CREATE TABLE users (
     id VARCHAR(36) PRIMARY KEY,
     fullname VARCHAR(128) NOT NULL,
     user_name VARCHAR(128) NOT NULL UNIQUE,
-    dob DATETIME,
+    dob DATE,
     gender BOOLEAN,
     email VARCHAR(128) NOT NULL,
-    password VARCHAR(128) NOT NULL,
+    hashed_password VARCHAR(128) NOT NULL,
     phone VARCHAR(128) NOT NULL,
     address VARCHAR(256),
     avatar VARCHAR(256) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
+    created_by VARCHAR(128) NONE,
+    updated_by VARCHAR(128) NONE
 );
 
 /* tach du lieu ra, foreign key 
@@ -19,8 +24,13 @@ CREATE TABLE conversations (
     user_id VARCHAR(36) NOT NULL,
     persona VARCHAR(128) NOT NULL,
     ended_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
+    created_by VARCHAR(128) NONE,
+    updated_by VARCHAR(128) NONE,
 
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     
 );
 
@@ -31,6 +41,11 @@ CREATE TABLE messages (
     sender_id VARCHAR(36) NOT NULL,
     content TEXT NOT NULL,
     message_type VARCHAR(50) DEFAULT 'TEXT', 
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
+    created_by VARCHAR(128) NONE,
+    updated_by VARCHAR(128) NONE,
 
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
@@ -43,6 +58,11 @@ CREATE TABLE mood_logs (
     conversation_id VARCHAR(36) NOT NULL,
     mood VARCHAR(64) NOT NULL, 
     note TEXT,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
+    created_by VARCHAR(128) NONE,
+    updated_by VARCHAR(128) NONE,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
@@ -53,7 +73,11 @@ CREATE TABLE journals (
   user_id VARCHAR(36) REFERENCES users(id),
   content TEXT,
   visibility TEXT CHECK (visibility IN ('private','public')),
-  
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP,
+  deleted_at TIMESTAMP,
+  created_by VARCHAR(128) NONE,
+  updated_by VARCHAR(128) NONE,
 
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     
@@ -68,6 +92,11 @@ CREATE TABLE contact_alerts (
     contact_phone VARCHAR(20),
     contact_email VARCHAR(128),
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
+    created_by VARCHAR(128) NONE,
+    updated_by VARCHAR(128) NONE,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -82,6 +111,11 @@ CREATE TABLE contact_alert_logs (
     sent_at TIMESTAMP,
     response_at TIMESTAMP,
     response_detail TEXT,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
+    created_by VARCHAR(128) NONE,
+    updated_by VARCHAR(128) NONE,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (alert_id) REFERENCES contact_alerts(id) ON DELETE CASCADE

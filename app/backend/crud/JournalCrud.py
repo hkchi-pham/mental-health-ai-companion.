@@ -1,8 +1,8 @@
 from sqlmodel import Session, select
 from typing import List, Optional
-from app.models.JournalModel import JournalModel
-from app.response.JournalResponse import JournalCreate, JournalUpdate
-from app import utils
+from backend.models.JournalModel import JournalModel
+from backend.response.JournalResponse import JournalCreate, JournalUpdate
+from backend import utils
 
 def create_journal(session: Session, data: JournalCreate):
     journal = JournalModel(**data.dict())

@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
-from app.crud.UserCrud import authenticate_user
-from app.response.UserResponse import UserLogin
-from app.response.AuthResponse import AuthToken
-from app.response.CommonResponse import MessageCode
-from app.security.AuthToken import create_access_token
-from app.config.database import get_db 
+from backend.crud import UserCrud as crud
+from backend.response.UserResponse import UserLogin
+from backend.response.AuthResponse import AuthToken
+from backend.response.CommonResponse import MessageCode
+from backend.security import Authentication as auth
+from config.database import get_db 
 
 router = APIRouter(
     prefix="/auth",
@@ -16,10 +16,21 @@ router = APIRouter(
 @router.post("/login", response_model=AuthToken)
 def user_login(user_in: UserLogin, db: Session = Depends(get_db)):
     try:
-        user = authenticate_user(db, user_in.user_name, user_in.password)
+        print("start api")
+        print(crud.authenticate_user(db, user_in))
+        user = crud.authenticate_user(db, user_in)
+        print(user)
         if not user:
-            raise HTTPException(status_code=400, detail=MessageCode.INVALID_CREDENTIALS.value)
-        token = create_access_token({"sub": user.user_name})
-        raise HTTPException(status_code=200, detail=MessageCode.USER_LOGIN_SUCCESSFULLY.value)
+            print("not user")
+            return HTTPException(status_code=400, detail=MessageCode.INVALID_CREDENTIALS.value)
+        print("create token")
+        print(auth.ACCESS_TOKEN_EXPIRE_MINUTES)
+        print(auth.auth123("123"))
+        print(999000)
+        print(auth.create_access_token(data={"sub": user.user_name}))
+        print(99999)
+        token = auth.create_access_token(data={"sub": user.user_name},expires_delta=timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES))
+        print(token)
+        return HTTPException(status_code=200, detail=MessageCode.USER_LOGIN_SUCCESSFULLY.value)
     except Exception as e:
         raise HTTPException(status_code=500, detail=MessageCode.USER_LOGIN_FAILED.value)

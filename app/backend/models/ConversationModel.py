@@ -1,7 +1,7 @@
 from sqlmodel import Field, Relationship, SQLModel
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime
-from ..utils import get_current_time
+from backend.utils import get_current_time
 from .BaseModel import BaseModel
 from uuid import uuid4
 

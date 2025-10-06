@@ -1,5 +1,5 @@
 from sqlmodel import Field, Relationship, SQLModel, Column, Boolean, String
-from sqlalchemy import CheckConstraint
+from sqlalchemy import CheckConstraint, JSON
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime
 from .BaseModel import BaseModel
@@ -13,7 +13,7 @@ class ContactAlertLogModel(BaseModel, table=True):
     user_id: str = Field(nullable=False)
     alert_id: str = Field(nullable=False)
     trigger_reason: Optional[str] = Field(default=None,nullable=True)
-    trigger_data = Optional[dict] = Field(default=None,nullable=True)
+    trigger_data: Optional[dict] = Field(default=None, sa_column=Column(JSON, nullable=True))
     status: str = Field(default="PENDING",sa_column=Column(String(50), nullable=False, server_default="PENDING"))
     sent_at: Optional[datetime] = Field(default=None, nullable=True)
     response_at: Optional[datetime] = Field(default=None, nullable=True)

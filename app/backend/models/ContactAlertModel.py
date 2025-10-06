@@ -13,9 +13,9 @@ class ContactAlertModel(BaseModel, table=True):
     user_id: str = Field(nullable=False)
     alert_type: str = Field(nullable=False)
     contact_name: str = Field(nullable=False)
-    contact_relation: str | None = Field(default=None)
-    contact_phone: str | None = Field(default=None)
-    contact_email: str | None = Field(default=None)
+    contact_relation: Optional[str] = Field(default=None)
+    contact_phone: Optional[str] = Field(default=None)
+    contact_email: Optional[str] = Field(default=None)
     is_active: bool = Field(default=True,sa_column=Column(Boolean, nullable=False, server_default="true"))
 
     

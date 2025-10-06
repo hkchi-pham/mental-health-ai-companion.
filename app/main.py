@@ -1,8 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
-from router import ConversationRouter, MessageRouter,UserRouter,MoodLogRouter, JournalRouter, ContactAlertLogRouter, ContactAlertRouter, AuthRouter
-
+from backend.router import ConversationRouter, MessageRouter,UserRouter,MoodLogRouter, JournalRouter, ContactAlertLogRouter, ContactAlertRouter, AuthRouter
 app = FastAPI(
     title="Chatbot Ai Mental Health",
     description="Assistatn chatbot and social platform for teenager with emotional and/or mental struggles",

@@ -39,7 +39,6 @@ class UserResponse(SQLModel): # schema for what you send back to client
     
 class UserUpdate(SQLModel): # schema for updating user's data
     fullname: Optional[str] = None
-    user_name: Optional[str] = None
     dob: Optional[date] = None
     gender: Optional[bool] = None
     email: Optional[str] = None
