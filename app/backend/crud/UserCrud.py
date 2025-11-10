@@ -7,6 +7,10 @@ from sqlalchemy import func
 from config.database import get_db
 from fastapi import HTTPException, status, Depends
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import func, or_, desc, asc
+from typing import Optional
+from datetime import datetime
+
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -18,6 +22,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool: # CHECK 
     """Verify password"""
     return pwd_context.verify(plain_password, hashed_password)
 
+
+
+
 # trc khi thêm 
 def authenticate_user(db: Session, data: UserLogin):
     print("start auth")
@@ -27,7 +34,7 @@ def authenticate_user(db: Session, data: UserLogin):
     print(user)
     if not user or not verify_password(data.password, user.hashed_password):
         return None
-    return True
+    return user 
 
 def check_user_name_exist(db: Session, user_name: str):
 
@@ -52,6 +59,53 @@ def create_user(db: Session, data: UserCreate):
     print("12345")
     return True
 
+
+def search_users(
+    session: Session,
+    q: str = None,
+    created_from: str = None,
+    sort_by: str = "user_name",
+    sort_order: str = "asc",
+    page: int = 1, page_size: int = 10
+):
+    print("start search user")
+    query = session.query(UserModel)
+    print("query")
+    if q:
+        query = query.filter(
+            or_(
+                UserModel.user_name.ilike(f"%{q}%"),
+                UserModel.fullname.ilike(f"%{q}%"),
+                UserModel.email.ilike(f"%{q}%")
+            )
+        )
+
+    print("filter")
+    if created_from:
+        query = query.filter(UserModel.created_at >= created_from)
+
+    if hasattr(UserModel, sort_by):
+        column = getattr(UserModel, sort_by)
+        query = query.order_by(asc(column) if sort_order.lower() == "asc" else desc(column))
+    else:
+        query = query.order_by(asc(UserModel.user_name))
+    print("sort")
+
+    total =query.count()  
+    
+    statement = query.offset((page - 1) * page_size).limit(page_size).all()
+
+    total_pages = (total + page_size - 1) // page_size if total > 0 else 0
+    print("statement")
+    return {
+        "items": jsonable_encoder(statement),  # ✅ serialize an toàn
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "total_pages": total_pages
+    }
+
+
 def get_user_by_user_name(db: Session, user_name: str):
     user = db.query(UserModel).filter(UserModel.user_name == user_name, UserModel.deleted_at.is_(None)).first()
     print(user)
@@ -68,7 +122,12 @@ def get_all_user(db: Session = Depends(get_db), page: int = 1, page_size: int = 
     total = db.exec(stmt).first() or 0  # luôn int, kể cả khi 0
 
     # lấy danh sách
-    statement = select(UserModel).offset((page - 1) * page_size).limit(page_size)
+    statement = (
+        select(UserModel)
+        .where(UserModel.deleted_at.is_(None))
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
     items = db.exec(statement).all()
 
     total_pages = (total + page_size - 1) // page_size if total > 0 else 0
@@ -82,17 +141,20 @@ def get_all_user(db: Session = Depends(get_db), page: int = 1, page_size: int = 
     }
 
 def update_user(db: Session, user_id: str, data: UserUpdate):
+    print("start updating user")
     user = db.get(UserModel, user_id)
-    print(user)
+    print("user")
     if not user:
         return None
     update_data = data.dict(exclude_unset=True)
     for key, value in update_data.items():
         setattr(user, key, value)
+    print("key, value")
     db.add(user)
     db.commit()
     db.refresh(user)
     return True
+
 
 def delete_user(db: Session, user_id: str) -> bool:
     print("start delete user")
