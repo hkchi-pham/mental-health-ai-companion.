@@ -4,6 +4,7 @@ from datetime import datetime
 
 class ContactAlertLogBase(SQLModel):
     user_id: str
+    alert_id: str
     alert_type: str
     trigger_reason: Optional[str] 
     trigger_data: Optional[dict] 
@@ -17,6 +18,8 @@ class ContactAlertLogCreate(ContactAlertLogBase):
 
 class ContactAlertLogRead(ContactAlertLogBase):
     id: str
+    user_id: str
+    alert_id: str
     alert_type: str
     trigger_reason: Optional[str] 
     trigger_data: Optional[dict] 
