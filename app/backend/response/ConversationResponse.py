@@ -12,7 +12,7 @@ class ConversationCreate(ConversationBase):
 
 class ConversationRead(ConversationBase):
     id: str
-    started_at: datetime
+    created_at: datetime
     ended_at: Optional[datetime] = None
 
 class ConversationUpdate(SQLModel):
@@ -26,5 +26,5 @@ class ConversationResponse(SQLModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
     ended_at: Optional[datetime] = None
-    created_by: Optional[datetime] = None
-    updated_by: Optional[datetime] = None
+    created_by: Optional[str] = None
+    updated_by: Optional[str] = None
