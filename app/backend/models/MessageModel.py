@@ -5,7 +5,7 @@ from .BaseModel import BaseModel
 from uuid import uuid4
 
 class MessageModel(BaseModel, table=True):
-    __tablename__ = "massages"
+    __tablename__ = "messages"
 
     conversation_id: str = Field(nullable=False)
     sender_id: str = Field(nullable=False)
