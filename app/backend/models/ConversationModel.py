@@ -12,7 +12,7 @@ class ConversationModel(BaseModel, table=True):
 
     user_id: str = Field(nullable=False)
     persona: str = Field(nullable=False)
-    ended_at: Optional[str] = Field(default_factory=get_current_time)
+    ended_at: Optional[datetime] = Field(default=None)
 
 
 #vt tất cả model còn lại
