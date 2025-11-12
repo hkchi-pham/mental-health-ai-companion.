@@ -9,7 +9,7 @@ class ContactAlertBase(SQLModel):
     contact_relation: Optional[str]
     contact_phone: Optional[str]
     contact_email: Optional[str]
-    is_active: str
+    is_active: bool
 
 class ContactAlertCreate(ContactAlertBase):
     pass
@@ -21,7 +21,7 @@ class ContactAlertRead(ContactAlertBase):
     contact_relation: Optional[str]
     contact_phone: Optional[str]
     contact_email: Optional[str]
-    is_active: str
+    is_active: bool
 
 class ContactAlertUpdate(SQLModel):
     contact_relation: Optional[str]
@@ -36,7 +36,7 @@ class ContactAlertResponse(SQLModel):
     contact_relation: Optional[str]
     contact_phone: Optional[str]
     contact_email: Optional[str]
-    is_active: str
+    is_active: bool
     created_at: datetime
     updated_at: Optional[datetime] = None
     ended_at: Optional[datetime] = None
