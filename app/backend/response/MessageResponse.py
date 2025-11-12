@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import datetime
 
 class MessageBase(SQLModel):
-    user_id: Optional[str] = None
+    sender_id: Optional[str] = None
     conversation_id: str
     content: str
     message_type: str
@@ -20,7 +20,7 @@ class MessageRead(MessageBase):
 
 class MessageResponse(SQLModel):
     id: str
-    user_id: str
+    sender_id: str
     conversation_id: str
     content: str
     message_type: str
