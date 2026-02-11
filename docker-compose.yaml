@@ -1,5 +1,6 @@
 services:
   api:
+    container_name: mental-health-api
     build: .
     ports:
       - 8081:80
@@ -8,30 +9,41 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      # AI Provider (set in .env or override here)
+      - AI_PROVIDER=${AI_PROVIDER:-openai}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-2024-08-06}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.0-flash}
+      - HUGGINGFACE_ENABLED=${HUGGINGFACE_ENABLED:-false}
+      # Database connection for container network
+      - DATABASE_URL=postgresql://hkchi-p:abc123@mental-health-db:5432/hkchi-p
     networks:
-      - db
+      - mental-health-network
     depends_on:
       - db
-      
+
   db:
-    container_name: postgres
-    image: postgres:17
+    container_name: mental-health-db
+    image: pgvector/pgvector:pg17
     environment:
       - TZ=Asia/Ho_Chi_Minh
       - PGTZ=Asia/Ho_Chi_Minh
       - POSTGRES_USER=hkchi-p
       - POSTGRES_PASSWORD=abc123
+      - POSTGRES_DB=hkchi-p
       - PGDATA=/data/postgres
     volumes:
-      - db:/data/postgres
+      - mental-health-db-data:/data/postgres
     ports:
       - "5332:5432"
     networks:
-      - db
+      - mental-health-network
     restart: unless-stopped
-    
+
   pgadmin:
-    container_name: pgadmin_container_backend_template
+    container_name: mental-health-pgadmin
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
@@ -40,11 +52,12 @@ services:
       - "${PGADMIN_PORT:-5051}:80"
     restart: unless-stopped
     networks:
-      - db
+      - mental-health-network
 
 networks:
-  db:
+  mental-health-network:
+    name: mental-health-network
     driver: bridge
 
 volumes:
-  db:
+  mental-health-db-data:

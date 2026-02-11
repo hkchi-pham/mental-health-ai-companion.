@@ -1,0 +1,68 @@
+services:
+  api:
+    container_name: mental-health-api
+    # REPLACE WITH YOUR IMAGE NAME
+    image: ${DOCKER_IMAGE:-mental-health-api:latest}
+    restart: always
+    ports:
+      - "${APP_PORT:-8081}:80"
+    env_file:
+      - .env
+    environment:
+      - AI_PROVIDER=${AI_PROVIDER:-openai}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-2024-08-06}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.0-flash}
+      - HUGGINGFACE_ENABLED=${HUGGINGFACE_ENABLED:-false}
+      - DATABASE_URL=postgresql://hkchi-p:abc123456@mental-health-db:5432/hkchi-p
+    depends_on:
+      - db
+    networks:
+      - mental-health-network
+
+  db:
+    container_name: mental-health-db
+    image: pgvector/pgvector:pg17
+    restart: always
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+      - PGTZ=Asia/Ho_Chi_Minh
+      - POSTGRES_USER=hkchi-p
+      - POSTGRES_PASSWORD=abc123456
+      - POSTGRES_DB=hkchi-p
+      - PGDATA=/data/postgres
+    volumes:
+      - mental-health-db-data:/data/postgres
+    networks:
+      - mental-health-network
+
+  # Optional: Database Backup Service
+  db-backup:
+    container_name: mental-health-db-backup
+    image: prodrigestivill/postgres-backup-local
+    restart: always
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=hkchi-p
+      - POSTGRES_USER=hkchi-p
+      - POSTGRES_PASSWORD=abc123456
+      - SCHEDULE=@daily
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6
+      - HEALTHCHECK_PORT=8080
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      - db
+    networks:
+      - mental-health-network
+
+networks:
+  mental-health-network:
+    name: mental-health-network
+    driver: bridge
+
+volumes:
+  mental-health-db-data:

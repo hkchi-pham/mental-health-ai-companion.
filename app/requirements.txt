@@ -8,6 +8,8 @@ uvicorn[standard]==0.24.0
 # Database
 sqlalchemy==2.0.23
 psycopg2-binary==2.9.9  # PostgreSQL driver
+psycopg2-binary==2.9.9  # PostgreSQL driver
+pgvector
 alembic==1.12.1  # Database migrations
 
 # Authentication
@@ -33,3 +35,10 @@ httpx==0.25.2  # For testing FastAPI
 
 # Production server (optional)
 gunicorn==21.2.0
+
+# AI/ML
+# sentence-transformers  # DISABLED - requires GPU/CUDA, use OpenAI or Gemini instead
+numpy
+scipy
+openai>=1.0.0
+google-generativeai>=0.3.0
