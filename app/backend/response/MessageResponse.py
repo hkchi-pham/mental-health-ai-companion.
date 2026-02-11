@@ -17,7 +17,6 @@ class MessageRead(MessageBase):
     message_type: str
 
     
-
 class MessageResponse(SQLModel):
     id: str
     sender_id: str

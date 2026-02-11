@@ -17,6 +17,7 @@ def create_contact_alert_log(session: Session, data: ContactAlertLogCreate):
 
 def search_contact_alert_logs(
     session: Session,
+    user_id:str,
     q: str = None,
     trigger_reason: str = None,
     trigger_data: str = None,
@@ -33,12 +34,12 @@ def search_contact_alert_logs(
     if q:
         query = query.filter(
             or_(
-                ContactAlertLogModel.user_id.ilike(f"%{q}%"),
                 ContactAlertLogModel.alert_id.ilike(f"%{q}%"),
             )
         )
 
-    
+    if user_id:
+        query = query.filter(ContactAlertLogModel.user_id == user_id)
     if trigger_reason:
         query = query.filter(ContactAlertLogModel.trigger_reason == trigger_reason)
     if trigger_data:
@@ -75,17 +76,18 @@ def search_contact_alert_logs(
 
 
 
-def get_contact_alert_log_by_id(session: Session, contact_alert_log_id: str):
-    contact_alert_log = session.query(ContactAlertLogModel).filter(ContactAlertLogModel.id == contact_alert_log_id, ContactAlertLogModel.deleted_at.is_(None)).first()
+def get_contact_alert_log_by_id(session: Session, user_id: str,contact_alert_log_id: str):
+    contact_alert_log = session.query(ContactAlertLogModel).filter(ContactAlertLogModel.id == contact_alert_log_id, ContactAlertLogModel.user_id == user_id,ContactAlertLogModel.deleted_at.is_(None)).first()
     print(contact_alert_log)
     if contact_alert_log:
         return contact_alert_log
     return None
 
 
-def get_all_contact_alert_logs(session: Session, page: int =1,page_size: int = 10 ):
+def get_all_contact_alert_logs(session: Session, user_id:str, page: int =1,page_size: int = 10 ):
     stmt = select(func.count()).select_from(ContactAlertLogModel).where(
-            ContactAlertLogModel.deleted_at.is_(None)
+            ContactAlertLogModel.deleted_at.is_(None),
+            ContactAlertLogModel.user_id == user_id
         )
     print("stmt")
     total = session.exec(stmt).first()
@@ -94,7 +96,7 @@ def get_all_contact_alert_logs(session: Session, page: int =1,page_size: int = 1
     # lấy danh sách theo phân trang
     statement = (
         select(ContactAlertLogModel)
-        .where(ContactAlertLogModel.deleted_at.is_(None))
+        .where(ContactAlertLogModel.deleted_at.is_(None),ContactAlertLogModel.user_id == user_id)
         .offset((page - 1) * page_size)
         .limit(page_size)
     )
@@ -111,8 +113,8 @@ def get_all_contact_alert_logs(session: Session, page: int =1,page_size: int = 1
     }
 
 
-def update_contact_alert_log(session: Session, contact_alert_log_id: str, data: ContactAlertLogUpdate):
-    contact_alert_log = session.get(ContactAlertLogModel, contact_alert_log_id)
+def update_contact_alert_log(session: Session,user_id:str, contact_alert_log_id: str, data: ContactAlertLogUpdate):
+    contact_alert_log = session.exec(select(ContactAlertLogModel).where(ContactAlertLogModel.id == contact_alert_log_id, ContactAlertLogModel.user_id == user_id))
     if not contact_alert_log:
         return None
     for key, value in data.dict(exclude_unset=True).items():
@@ -123,10 +125,11 @@ def update_contact_alert_log(session: Session, contact_alert_log_id: str, data: 
     return True
 
 
-def delete_contact_alert_log(session: Session, contact_alert_log_id: str) -> bool:
+def delete_contact_alert_log(session: Session,user_id:str, contact_alert_log_id: str) -> bool:
     contact_alert_log = session.exec(
         select(ContactAlertLogModel).where(
             ContactAlertLogModel.id == contact_alert_log_id,
+            ContactAlertLogModel.user_id == user_id,
             ContactAlertLogModel.deleted_at.is_(None)
         )
     ).first()

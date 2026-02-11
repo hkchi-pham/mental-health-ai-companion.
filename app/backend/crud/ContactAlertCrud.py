@@ -22,6 +22,7 @@ def create_contact_alert(session: Session, data: ContactAlertCreate):
 
 def search_contact_alerts(
     session: Session,
+    user_id:str,
     q: str = None,
     contact_name: str = None,
     contact_relation: str = None,
@@ -43,7 +44,8 @@ def search_contact_alerts(
             )
         )
 
-    
+    if user_id:
+        query = query.filter(ContactAlertModel.user_id == user_id)
     if created_time:
         query = query.filter(ContactAlertModel.created_at >= created_time)
     if contact_name:
@@ -70,7 +72,7 @@ def search_contact_alerts(
     total_pages = (total + page_size - 1) // page_size if total > 0 else 0
     print("statement")
     return {
-        "items": jsonable_encoder(statement),  # ✅ serialize an toàn
+        "items": jsonable_encoder(statement),  
         "total": total,
         "page": page,
         "page_size": page_size,
@@ -78,17 +80,18 @@ def search_contact_alerts(
     }
 
 
-def get_contact_alert_by_id(session: Session, contact_alert_id: str):
-    contact_alert = session.query(ContactAlertModel).filter(ContactAlertModel.id == contact_alert_id, ContactAlertModel.deleted_at.is_(None)).first()
+def get_contact_alert_by_id(session: Session, user_id:str, contact_alert_id: str):
+    contact_alert = session.query(ContactAlertModel).filter(ContactAlertModel.id == contact_alert_id,ContactAlertModel.user_id == user_id, ContactAlertModel.deleted_at.is_(None)).first()
     print(contact_alert)
     if contact_alert:
         return contact_alert
     return None
 
 
-def get_all_contact_alerts(session: Session, page: int =1,page_size: int = 10 ):
+def get_all_contact_alerts(session: Session, user_id:str, page: int =1,page_size: int = 10 ):
     stmt = select(func.count()).select_from(ContactAlertModel).where(
-            ContactAlertModel.deleted_at.is_(None)
+            ContactAlertModel.deleted_at.is_(None),
+            ContactAlertModel.user_id == user_id
         )
     print("stmt")
     total = session.exec(stmt).first()
@@ -96,7 +99,7 @@ def get_all_contact_alerts(session: Session, page: int =1,page_size: int = 10 ):
     # lấy danh sách theo phân trang
     statement = (
         select(ContactAlertModel)
-        .where(ContactAlertModel.deleted_at.is_(None))
+        .where(ContactAlertModel.deleted_at.is_(None),ContactAlertModel.user_id == user_id)
         .offset((page - 1) * page_size)
         .limit(page_size)
     )
@@ -113,8 +116,8 @@ def get_all_contact_alerts(session: Session, page: int =1,page_size: int = 10 ):
     }
 
 
-def update_contact_alert(session: Session, contact_alert_id: str, data: ContactAlertUpdate):
-    contact_alert = session.get(ContactAlertModel, contact_alert_id)
+def update_contact_alert(session: Session, user_id: str, contact_alert_id: str, data: ContactAlertUpdate):
+    contact_alert = session.exec(select(ContactAlertModel).where(ContactAlertModel.id == contact_alert_id, ContactAlertModel.user_id == user_id))
     if not contact_alert:
         return None
     for key, value in data.dict(exclude_unset=True).items():
@@ -125,10 +128,11 @@ def update_contact_alert(session: Session, contact_alert_id: str, data: ContactA
     return True
 
 
-def delete_contact_alert(session: Session, contact_alert_id: str) -> bool:
+def delete_contact_alert(session: Session, user_id, contact_alert_id: str) -> bool:
     contact_alert = session.exec(
         select(ContactAlertModel).where(
             ContactAlertModel.id == contact_alert_id,
+            ContactAlertModel.user_id == user_id,
             ContactAlertModel.deleted_at.is_(None)
         )
     ).first()

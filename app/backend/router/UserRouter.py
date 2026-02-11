@@ -4,7 +4,11 @@ from typing import List
 from config.database import get_db
 from backend.response.UserResponse import UserCreate, UserUpdate, UserResponse
 from backend.response.CommonResponse import SuccessResponse, PaginatedResponse, ErrorResponse, MessageCode
+from backend.models.UserModel import UserModel
 from backend.crud import UserCrud as crud
+from typing import Optional
+from datetime import datetime
+from backend.security.Authentication import get_current_user
 
 router = APIRouter(
     prefix="/users",
@@ -19,13 +23,22 @@ def create_user(
     data: UserCreate = Body(...),
     db: Session = Depends(get_db)
 ):
+    import traceback
     try:
-        if check_user_name_exist(db, data.user_name):
-            return HTTPException(status_code=500, detail=MessageCode.USER_ALREADY_EXISTS.value)
+        print("=== CREATE USER START ===")
+        if crud.check_user_name_exist(db, data.user_name):
+            print("User already exists")
+            raise HTTPException(status_code=400, detail=MessageCode.USER_ALREADY_EXISTS.value)
+        print("Creating user...")
         result = crud.create_user(db, data)
-        return HTTPException(status_code=200, detail=MessageCode.CREATE_USER_SUCCESSFULLY.value)
+        print("User created successfully")
+        return {"message": MessageCode.CREATE_USER_SUCCESSFULLY.value, "success": True}
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=MessageCode.USER_ALREADY_EXISTS.value)
+        print(f"=== ERROR: {str(e)} ===")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/", 
             # response_model=PaginatedResponse[UserResponse], 
@@ -49,7 +62,45 @@ def get_all_user(
             total_pages=result["total_pages"]
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail="")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/search-all-users",
+            response_model=PaginatedResponse[UserResponse],
+            responses={404: {"model": ErrorResponse}, 500: {"model": ErrorResponse}})
+def search_all_users(
+    q: Optional[str]= None,
+    created_time: Optional[datetime] = None,
+    session: Session = Depends(get_db),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1, le=100)
+):
+    try:
+        print("search users")
+        results = crud.search_users(
+            session=session,
+            q=q,
+            created_time=created_time,
+            page=page,
+            page_size=page_size
+        )
+        print(results)
+        if not results:
+            return HTTPException(status_code=404, detail=MessageCode.USER_NOT_FOUND.value)
+        
+    
+        return PaginatedResponse[UserResponse](
+            message=MessageCode.GET_USER_SUCCESSFULLY.value,
+            data=results["items"],
+            total=results["total"],
+            page=results["page"],
+            page_size=results["page_size"],
+            total_pages=results["total_pages"]
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @router.get("/{user_name}", response_model = SuccessResponse[UserResponse],
@@ -68,31 +119,32 @@ def get_user_by_user_name(
             data=result
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail="")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.put("/{user_id}", 
             responses={404: {"model": ErrorResponse}, 500: {"model": ErrorResponse}}
         )
 def update_user(
-    user_id: str,
+    current_user: UserModel = Depends(get_current_user),
     data: UserUpdate = Body(...),
     db: Session = Depends(get_db)
 ):
     try:
+        user_id = current_user.id
         result = crud.update_user(db, user_id, data)
         return HTTPException(status_code=200, detail=MessageCode.UPDATE_USER_SUCCESSFULLY.value)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=MessageCode.UPDATE_USER_FAILED.value)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete("/{user_id}", 
-               response_model=SuccessResponse[dict], 
                responses={404: {"model": ErrorResponse}, 500: {"model": ErrorResponse}}
                
             )
-def delete_user(user_id: str, db: Session = Depends(get_db)):
+def delete_user(current_user: UserModel = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
+        user_id = current_user.id
         print(user_id)
         result = crud.delete_user(db, user_id)
         if not result:
@@ -100,6 +152,6 @@ def delete_user(user_id: str, db: Session = Depends(get_db)):
         print(result)
         return HTTPException(status_code=200, detail=MessageCode.DELETE_USER_SUCCESSFULLY.value)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=MessageCode.DELETE_USER_FAILED.value)
+        raise HTTPException(status_code=500, detail=str(e))
 
     # tạo ra một user rồi tự động thêm cho nó 1 đoạn chat default để lựa chọn con bot default. 

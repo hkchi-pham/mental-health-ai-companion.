@@ -16,20 +16,10 @@ router = APIRouter(
 @router.post("/login", response_model=AuthToken)
 def user_login(user_in: UserLogin, db: Session = Depends(get_db)):
     try:
-        print("start api")
-        print(crud.authenticate_user(db, user_in))
         user = crud.authenticate_user(db, user_in)
-        print(user)
         if not user:
-            print("not user")
             return HTTPException(status_code=400, detail=MessageCode.INVALID_CREDENTIALS.value)
-        print("create token")
-        print(auth.ACCESS_TOKEN_EXPIRE_MINUTES)
-        print(999000)
-        print(auth.create_access_token(data={"sub": user.user_name}))
-        print(99999)
-        token = auth.create_access_token(data={"sub": user.user_name})
-        print(token)
+        token = auth.create_access_token(data={"sub": user.user_name, "user_id": user.id})
         return {
             "access_token": token,
             "expires_in": auth.ACCESS_TOKEN_EXPIRE_MINUTES,
