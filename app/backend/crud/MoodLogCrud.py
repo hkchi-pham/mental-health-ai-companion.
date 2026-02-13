@@ -17,8 +17,8 @@ def create_mood_log(session: Session, data: MoodLogCreate):
 
 def search_mood_logs(
     session: Session,
+    user_id:str,
     q: str= None,
-    user_id: str=None,
     convo_id: str =None,
     created_time: str = None,
     sort_by: str = "created_at",
@@ -65,18 +65,18 @@ def search_mood_logs(
     }
 
 
-def get_mood_log_by_id(session: Session, mood_log_id: str):
-    moodlog = session.query(MoodLogModel).filter(MoodLogModel.id == mood_log_id, MoodLogModel.deleted_at.is_(None)).first()
+def get_mood_log_by_id(session: Session, mood_log_id: str,user_id: str):
+    moodlog = session.query(MoodLogModel).filter(MoodLogModel.id == mood_log_id,MoodLogModel.user_id==user_id, MoodLogModel.deleted_at.is_(None)).first()
     print(moodlog)
     if moodlog:
         return moodlog
     return None
 
 
-def get_all_mood_logs(session: Session, page: int =1,page_size: int = 10 ):
+def get_all_mood_logs(session: Session,user_id:str, page: int =1,page_size: int = 10 ):
     print("start to get all mood log")
     stmt = select(func.count()).select_from(MoodLogModel).where(
-            MoodLogModel.deleted_at.is_(None)
+            MoodLogModel.deleted_at.is_(None), MoodLogModel.user_id == user_id
         )
     print("stmt")
     total = session.exec(stmt).first()
@@ -87,7 +87,7 @@ def get_all_mood_logs(session: Session, page: int =1,page_size: int = 10 ):
     # lấy danh sách theo phân trang
     statement = (
         select(MoodLogModel)
-        .where(MoodLogModel.deleted_at.is_(None))
+        .where(MoodLogModel.deleted_at.is_(None), MoodLogModel.user_id == user_id)
         .offset((page - 1) * page_size)
         .limit(page_size)
     )
@@ -103,8 +103,8 @@ def get_all_mood_logs(session: Session, page: int =1,page_size: int = 10 ):
         "total_pages": total_pages
     }
 
-def update_mood_log(session: Session, mood_log_id: str, data: MoodLogUpdate):
-    mood_log = session.get(MoodLogModel, mood_log_id)
+def update_mood_log(session: Session, mood_log_id: str,user_id:str, data: MoodLogUpdate):
+    mood_log = session.exec(select(MoodLogModel).where(MoodLogModel.id == mood_log_id, MoodLogModel.user_id == user_id))
     if not mood_log:
         return None
     for key, value in data.dict(exclude_unset=True).items():
@@ -115,11 +115,12 @@ def update_mood_log(session: Session, mood_log_id: str, data: MoodLogUpdate):
     return True
 
 
-def delete_mood_log(session: Session, mood_log_id: str) -> bool:
+def delete_mood_log(session: Session, mood_log_id: str, user_id: str) -> bool:
     print("start to delete moodlog")
     mood_log = session.exec(
         select(MoodLogModel).where(
             MoodLogModel.id == mood_log_id,
+            MoodLogModel.user_id == user_id,
             MoodLogModel.deleted_at.is_(None)
         )
     ).first()

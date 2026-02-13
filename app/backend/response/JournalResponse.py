@@ -1,27 +1,43 @@
-from sqlmodel import SQLModel
-from typing import Optional
+from sqlmodel import SQLModel, Field
+from sqlalchemy import Column
+from sqlalchemy.types import JSON
+from typing import Optional, Dict
 from datetime import datetime
 
 class JournalBase(SQLModel):
     user_id: str
+    title: str
+    emoji: str
+    page: Dict
     content: str
     visibility: str
 
-class JournalCreate(JournalBase):
-    pass
+class JournalCreate(SQLModel):
+    title: str
+    emoji: str
+    visibility: str
 
 class JournalRead(JournalBase):
     id: str
+    title: str
+    emoji: str
     content:str
+    page: Dict
     visibility: str
 
 class JournalUpdate(SQLModel):
-    content: str
+    title: str
+    emoji: str
     visibility: str
+
+class JournalPageUpdate(SQLModel):
+    content: str
 
 class JournalResponse(SQLModel):
     id: str
     user_id: str
+    title: str
+    page: Dict 
     content: str
     visibility: str
     created_at: datetime

@@ -15,7 +15,7 @@ services:
       
   db:
     container_name: postgres
-    image: postgres:17
+    image: pgvector/pgvector:pg17
     environment:
       - TZ=Asia/Ho_Chi_Minh
       - PGTZ=Asia/Ho_Chi_Minh

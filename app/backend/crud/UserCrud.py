@@ -63,7 +63,7 @@ def create_user(db: Session, data: UserCreate):
 def search_users(
     session: Session,
     q: str = None,
-    created_from: str = None,
+    created_time: str = None,
     sort_by: str = "user_name",
     sort_order: str = "asc",
     page: int = 1, page_size: int = 10
@@ -81,8 +81,8 @@ def search_users(
         )
 
     print("filter")
-    if created_from:
-        query = query.filter(UserModel.created_at >= created_from)
+    if created_time:
+        query = query.filter(UserModel.created_at >= created_time)
 
     if hasattr(UserModel, sort_by):
         column = getattr(UserModel, sort_by)
@@ -133,7 +133,7 @@ def get_all_user(db: Session = Depends(get_db), page: int = 1, page_size: int = 
     total_pages = (total + page_size - 1) // page_size if total > 0 else 0
 
     return {
-        "items": jsonable_encoder(items),  # ✅ serialize an toàn
+        "items": items,
         "total": total,
         "page": page,
         "page_size": page_size,

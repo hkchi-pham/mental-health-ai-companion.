@@ -1,0 +1,12 @@
+CREATE TABLE trees (
+    id VARCHAR(36) PRIMARY KEY,
+    user_id VARCHAR(36) REFERENCES users(id),
+    tree_type VARCHAR(128) NOT NULL,
+    
+    level INTEGER NOT NULL DEFAULT 1,
+    growth_points INTEGER NOT NULL DEFAULT 0,
+    health INTEGER NOT NULL DEFAULT 100,
+
+    last_water_at TIMESTAMP WITHOUT TIMEZONE,
+
+)

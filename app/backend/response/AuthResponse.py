@@ -11,4 +11,4 @@ class AuthToken(SQLModel):
 
 class TokenData(SQLModel):
     username: Optional[str] = None
-    user_id: Optional[int] = None
+    user_id: Optional[str] = None

@@ -11,6 +11,9 @@ class UserBase(SQLModel): #common field shared across schema
     phone: str
     address: Optional[str] = None
     avatar: Optional[str] = None 
+    points: int
+    water_units: int
+    tree_grown: int
 
 class UserCreate(UserBase): # create new user
     email: str
@@ -34,6 +37,9 @@ class UserResponse(SQLModel): # schema for what you send back to client
     phone: Optional[str] = None
     address: Optional[str] = None
     avatar: Optional[str] = None
+    points: Optional[int] = None
+    water_units: Optional[int] = None
+    tree_grown: Optional[int] = None
     created_at: Optional[datetime] = None
     created_by: Optional[str] = None
     

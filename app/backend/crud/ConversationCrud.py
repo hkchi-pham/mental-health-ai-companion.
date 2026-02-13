@@ -21,8 +21,8 @@ def create_conversation(session: Session, data: ConversationCreate):
     return True
 
 
-def check_conversation_id_exist(db: Session, conv_id: str):
-    conv = db.query(ConversationModel).filter(ConversationModel.conv_id == conv_id).first()
+def check_conversation_id_exist(db: Session, user_id:str,conv_id: str):
+    conv = db.query(ConversationModel).filter(ConversationModel.conv_id == conv_id, ConversationModel.user_id == user_id).first()
     print(conv)
     if conv:
         return True
@@ -30,6 +30,7 @@ def check_conversation_id_exist(db: Session, conv_id: str):
 
 def search_conversations(
     session: Session,
+    user_id:str,
     q: str = None,
     start_from: str = None,
     ended_to: str = None,
@@ -43,16 +44,18 @@ def search_conversations(
     if q:
         query = query.filter(
             or_(
-                ConversationModel.user_id.ilike(f"%{q}%"),
                 ConversationModel.persona.ilike(f"%{q}%"),
             )
         )
+    
 
     print("q")
     if start_from:
         query = query.filter(ConversationModel.created_at >= start_from)
     if ended_to:
         query = query.filter(ConversationModel.ended_at <= ended_to)
+    if user_id:
+        query = query.filter(ConversationModel.user_id == user_id)
     print("filter")
     if hasattr(ConversationModel, sort_by):
         column = getattr(ConversationModel, sort_by)
@@ -67,7 +70,7 @@ def search_conversations(
     total_pages = (total + page_size - 1) // page_size if total > 0 else 0
     print("statement")
     return {
-        "items": jsonable_encoder(statement),  # ✅ serialize an toàn
+        "items": jsonable_encoder(statement),  
         "total": total,
         "page": page,
         "page_size": page_size,
@@ -75,20 +78,21 @@ def search_conversations(
     }
 
 
-def get_conversation_by_id(session: Session, conv_id: str):
+def get_conversation_by_id(session: Session,user_id:str, conv_id: str):
     print("get conv by id")
     print(ConversationModel.__table__.columns.keys())
-    conv = session.query(ConversationModel).filter(ConversationModel.id == conv_id, ConversationModel.deleted_at.is_(None)).first()
+    conv = session.query(ConversationModel).filter(ConversationModel.id == conv_id,ConversationModel.user_id == user_id, ConversationModel.deleted_at.is_(None)).first()
     print(conv)
     if conv:
         return conv
     return None
 
 
-def get_all_conversations(session: Session, page: int = 1,page_size: int = 10 ):
+def get_all_conversations(session: Session,user_id:str, page: int = 1,page_size: int = 10 ):
     print("start to get all convo")
     stmt = select(func.count()).select_from(ConversationModel).where(
-            ConversationModel.deleted_at.is_(None)
+            ConversationModel.deleted_at.is_(None),
+            ConversationModel.user_id == user_id
         )
     print("stmt")
     total = session.exec(stmt).first()
@@ -99,7 +103,7 @@ def get_all_conversations(session: Session, page: int = 1,page_size: int = 10 ):
     # lấy danh sách theo phân trang
     statement = (
         select(ConversationModel)
-        .where(ConversationModel.deleted_at.is_(None))
+        .where(ConversationModel.deleted_at.is_(None), ConversationModel.user_id == user_id)
         .offset((page - 1) * page_size)
         .limit(page_size)
     )
@@ -116,8 +120,8 @@ def get_all_conversations(session: Session, page: int = 1,page_size: int = 10 ):
     }
 
 
-def update_conversation(session: Session, conv_id: str, data: ConversationUpdate):
-    conv = session.get(ConversationModel, conv_id)
+def update_conversation(session: Session, conv_id: str,user_id:str, data: ConversationUpdate):
+    conv = session.exec(select(ConversationModel).where(ConversationModel.id == conv_id, ConversationModel.user_id == user_id))
     if not conv:
         return None
     for key, value in data.dict(exclude_unset=True).items():
@@ -128,10 +132,11 @@ def update_conversation(session: Session, conv_id: str, data: ConversationUpdate
     return True
 
 
-def delete_conversation(session: Session, conv_id: str) -> bool:
+def delete_conversation(session: Session, user_id:str, conv_id: str) -> bool:
     convo = session.exec(
         select(ConversationModel).where(
             ConversationModel.id == conv_id,
+            ConversationModel.user_id == user_id,
             ConversationModel.deleted_at.is_(None)
         )
     ).first()

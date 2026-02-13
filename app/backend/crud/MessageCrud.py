@@ -22,8 +22,8 @@ def create_message(session: Session, data: MessageCreate):
 
 def search_messages(
     session: Session,
+    sender_id:str,
     q: str= None,
-    sender_id: str = None,
     message_type: str= None,
     start_time: str = None,
     end_time: str= None,
@@ -72,8 +72,8 @@ def search_messages(
         "total_pages": total_pages
     }
 
-def get_message_by_id(session: Session, mess_id: str):
-    mess = session.query(MessageModel).filter(MessageModel.id == mess_id, MessageModel.deleted_at.is_(None)).first()
+def get_message_by_id(session: Session, mess_id: str, user_id: str):
+    mess = session.query(MessageModel).filter(MessageModel.id == mess_id,MessageModel.sender_id==user_id, MessageModel.deleted_at.is_(None)).first()
     print(mess)
     if mess:
         return mess
@@ -81,10 +81,11 @@ def get_message_by_id(session: Session, mess_id: str):
 
 
 
-def get_messages_by_convo(session: Session,convo_id: str, page:int = 1, page_size: int = 10):
+def get_messages_by_convo(session: Session,user_id:str,convo_id: str, page:int = 1, page_size: int = 10):
     print("start get mess by convo")
     stmt = select(func.count()).select_from(MessageModel).where(
             MessageModel.conversation_id == convo_id,
+            MessageModel.sender_id == user_id,
             MessageModel.deleted_at.is_(None)
         )
     print("stmt")
@@ -93,7 +94,7 @@ def get_messages_by_convo(session: Session,convo_id: str, page:int = 1, page_siz
     # lấy danh sách theo phân trang
     statement = (
         select(MessageModel)
-        .where(MessageModel.conversation_id == convo_id, MessageModel.deleted_at.is_(None))
+        .where(MessageModel.conversation_id == convo_id,MessageModel.sender_id== user_id,MessageModel.deleted_at.is_(None))
         .offset((page - 1) * page_size)
         .limit(page_size)
     )

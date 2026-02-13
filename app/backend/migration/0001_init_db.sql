@@ -13,8 +13,8 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
-    created_by VARCHAR(128) NONE,
-    updated_by VARCHAR(128) NONE
+    created_by VARCHAR(128) NULL,
+    updated_by VARCHAR(128) NULL
 );
 
 /* tach du lieu ra, foreign key 
@@ -27,8 +27,8 @@ CREATE TABLE conversations (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
-    created_by VARCHAR(128) NONE,
-    updated_by VARCHAR(128) NONE,
+    created_by VARCHAR(128) NULL,
+    updated_by VARCHAR(128) NULL,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     
@@ -44,8 +44,8 @@ CREATE TABLE messages (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
-    created_by VARCHAR(128) NONE,
-    updated_by VARCHAR(128) NONE,
+    created_by VARCHAR(128) NULL,
+    updated_by VARCHAR(128) NULL,
 
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
@@ -61,8 +61,8 @@ CREATE TABLE mood_logs (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
-    created_by VARCHAR(128) NONE,
-    updated_by VARCHAR(128) NONE,
+    created_by VARCHAR(128) NULL,
+    updated_by VARCHAR(128) NULL,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
@@ -76,8 +76,8 @@ CREATE TABLE journals (
   created_at TIMESTAMP NOT NULL,
   updated_at TIMESTAMP,
   deleted_at TIMESTAMP,
-  created_by VARCHAR(128) NONE,
-  updated_by VARCHAR(128) NONE,
+  created_by VARCHAR(128) NULL,
+  updated_by VARCHAR(128) NULL,
 
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     
@@ -95,8 +95,8 @@ CREATE TABLE contact_alerts (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
-    created_by VARCHAR(128) NONE,
-    updated_by VARCHAR(128) NONE,
+    created_by VARCHAR(128) NULL,
+    updated_by VARCHAR(128) NULL,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -114,8 +114,8 @@ CREATE TABLE contact_alert_logs (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
-    created_by VARCHAR(128) NONE,
-    updated_by VARCHAR(128) NONE,
+    created_by VARCHAR(128) NULL,
+    updated_by VARCHAR(128) NULL,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (alert_id) REFERENCES contact_alerts(id) ON DELETE CASCADE
