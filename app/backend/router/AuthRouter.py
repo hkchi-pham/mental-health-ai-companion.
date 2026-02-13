@@ -25,12 +25,16 @@ def user_login(user_in: UserLogin, db: Session = Depends(get_db)):
             return HTTPException(status_code=400, detail=MessageCode.INVALID_CREDENTIALS.value)
         print("create token")
         print(auth.ACCESS_TOKEN_EXPIRE_MINUTES)
-        print(auth.auth123("123"))
         print(999000)
         print(auth.create_access_token(data={"sub": user.user_name}))
         print(99999)
-        token = auth.create_access_token(data={"sub": user.user_name},expires_delta=timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES))
+        token = auth.create_access_token(data={"sub": user.user_name})
         print(token)
-        return HTTPException(status_code=200, detail=MessageCode.USER_LOGIN_SUCCESSFULLY.value)
+        return {
+            "access_token": token,
+            "expires_in": auth.ACCESS_TOKEN_EXPIRE_MINUTES,
+            "user_name": user.user_name,
+            "user_id": user.id, 
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=MessageCode.USER_LOGIN_FAILED.value)
