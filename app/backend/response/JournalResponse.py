@@ -8,14 +8,12 @@ class JournalBase(SQLModel):
     user_id: str
     title: str
     emoji: str
-    page: Dict
+    page: Dict = Field(default_factory=dict, sa_column=Column(JSON))
     content: str
     visibility: str
 
-class JournalCreate(SQLModel):
-    title: str
-    emoji: str
-    visibility: str
+class JournalCreate(JournalBase):
+    pass
 
 class JournalRead(JournalBase):
     id: str

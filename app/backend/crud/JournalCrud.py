@@ -7,15 +7,8 @@ from datetime import datetime
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import func, or_, desc, asc
 
-def create_journal(session: Session, data: JournalCreate, user_id:str):
-    journal = JournalModel(
-        user_id=user_id,
-        title=data.title,
-        emoji=data.emoji,
-        visibility=data.visibility,
-        page={},       
-        content=""
-    )
+def create_journal(session: Session, data: JournalCreate):
+    journal = JournalModel(**data.dict())
     session.add(journal)
     session.commit()
     session.refresh(journal)

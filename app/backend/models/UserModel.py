@@ -16,7 +16,7 @@ class UserModel(BaseModel, table=True):
     hashed_password: str = Field(nullable=False, max_length=128)
     phone: str = Field(nullable=False, max_length=128)
     address: Optional[str] = Field(nullable=True,max_length=256)
-    avatar: str = Field(nullable=False, max_length=256)
+    avatar: Optional[str] = Field(default="", nullable=True, max_length=256)
     points: int = 0
     water_units: int = 0
     tree_grown: int = 0

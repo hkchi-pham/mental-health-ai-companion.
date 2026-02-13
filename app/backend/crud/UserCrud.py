@@ -29,10 +29,12 @@ def verify_password(plain_password: str, hashed_password: str) -> bool: # CHECK 
 def authenticate_user(db: Session, data: UserLogin):
     print("start auth")
     user = db.query(UserModel).filter(UserModel.user_name == data.user_name).first()
-    print(data.password)
-    print(verify_password(data.password, user.hashed_password))
     print(user)
-    if not user or not verify_password(data.password, user.hashed_password):
+    if not user:
+        print("User not found")
+        return None
+    if not verify_password(data.password, user.hashed_password):
+        print("Invalid password")
         return None
     return user 
 
@@ -49,7 +51,9 @@ def create_user(db: Session, data: UserCreate):
     # lưu ý: change password các hth lớn thường sẽ check password, password ph tuân theo một rule nhất định
     # add thêm pass word đã hash vào hashed_password=get_password_hash(password)
     print(111)
-    user = UserModel(**data.dict(), hashed_password=get_password_hash(data.password))
+    # Exclude password field since UserModel uses hashed_password instead
+    user_data = data.dict(exclude={"password"})
+    user = UserModel(**user_data, hashed_password=get_password_hash(data.password))
     print("234")
     db.add(user)
     print(345)

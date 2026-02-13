@@ -1,7 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
-from backend.router import ConversationRouter, MessageRouter,UserRouter,MoodLogRouter, JournalRouter, ContactAlertLogRouter, ContactAlertRouter, AuthRouter, TreeRouter, ActionRouter
+from backend.router import ConversationRouter, MessageRouter, UserRouter, MoodLogRouter, JournalRouter, ContactAlertLogRouter, ContactAlertRouter, AuthRouter, TreeRouter, ActionRouter
+from backend.router import ConfigRouter
+
 
 app = FastAPI(
     title="Chatbot Ai Mental Health",
@@ -29,4 +31,5 @@ app.include_router(ContactAlertRouter.router, prefix="/api/v1")
 app.include_router(AuthRouter.router, prefix="/api/v1")
 app.include_router(AuthRouter.router, prefix="/api/v1")
 app.include_router(TreeRouter.router, prefix="/api/v1")
-# app.include_router(ActionRouter.router, prefix="/api/v1")
+app.include_router(ConfigRouter.router, prefix="/api/v1")
+app.include_router(ActionRouter.router, prefix="/api/v1")

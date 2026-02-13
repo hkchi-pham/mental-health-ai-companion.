@@ -25,9 +25,9 @@ router = APIRouter(
 def create_conversation(data: ConversationCreate,current_user: UserModel = Depends(get_current_user), session: Session = Depends(get_db)):
     try:
         print("start create convo")
-        data.user_id = current_user
+        data.user_id = current_user.id  # Use .id not full UserModel
         conv = ConversationCrud.create_conversation(session, data)
-        return HTTPException(status_code=200, detail=MessageCode.CREATE_CONVERSATION_SUCCESSFULLY.value)
+        return {"message": MessageCode.CREATE_CONVERSATION_SUCCESSFULLY.value, "success": True}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

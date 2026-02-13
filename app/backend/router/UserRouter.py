@@ -23,12 +23,21 @@ def create_user(
     data: UserCreate = Body(...),
     db: Session = Depends(get_db)
 ):
+    import traceback
     try:
+        print("=== CREATE USER START ===")
         if crud.check_user_name_exist(db, data.user_name):
-            return HTTPException(status_code=500, detail=MessageCode.USER_ALREADY_EXISTS.value)
+            print("User already exists")
+            raise HTTPException(status_code=400, detail=MessageCode.USER_ALREADY_EXISTS.value)
+        print("Creating user...")
         result = crud.create_user(db, data)
-        return HTTPException(status_code=200, detail=MessageCode.CREATE_USER_SUCCESSFULLY.value)
+        print("User created successfully")
+        return {"message": MessageCode.CREATE_USER_SUCCESSFULLY.value, "success": True}
+    except HTTPException:
+        raise
     except Exception as e:
+        print(f"=== ERROR: {str(e)} ===")
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/", 

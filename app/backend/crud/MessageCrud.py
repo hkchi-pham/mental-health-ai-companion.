@@ -8,6 +8,21 @@ from datetime import datetime
 from sqlalchemy import or_, desc, asc
 from datetime import datetime
 
+
+def get_recent_messages(session: Session, convo_id: str, limit: int = 5):
+    """Get the most recent messages in a conversation for AI context."""
+    statement = (
+        select(MessageModel)
+        .where(
+            MessageModel.conversation_id == convo_id,
+            MessageModel.deleted_at.is_(None)
+        )
+        .order_by(desc(MessageModel.created_at))
+        .limit(limit)
+    )
+    items = session.exec(statement).all()
+    return list(reversed(items))  # Oldest first for context
+
 def create_message(session: Session, data: MessageCreate):
     print("start creating message")
     message = MessageModel(**data.dict())
