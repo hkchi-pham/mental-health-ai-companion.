@@ -17,14 +17,15 @@ def create_tree(db: Session, data: TreeCreate):
     return True
 
 def get_tree_by_user(db: Session, user_id: str):
-    tree = db.exec(
-        select(TreeModel).where(TreeModel.user_id == user_id)
-    ).first()
+    trees = db.exec(
+        select(TreeModel).where(
+            TreeModel.user_id == user_id,
+            TreeModel.deleted_at.is_(None),
+        )
+    ).all()
 
-    if not tree:
-        return False
-    
-    return jsonable_encoder(tree)
+    # Always a list (possibly empty) so the caller can build a PaginatedResponse.
+    return jsonable_encoder(trees)
 
 def water_tree(db: Session, user_id : str):
     tree = db.exec(

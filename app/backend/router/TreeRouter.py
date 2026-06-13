@@ -46,10 +46,14 @@ async def get_tree_by_user(
 ):
     try:
         result = TreeCrud.get_tree_by_user(session, current_user.id)
-        if not result:
-            raise HTTPException(status_code=404, detail=MessageCode.TREE_NOT_FOUND.value)
-        return PaginatedResponse[TreeResponse](
-            message=MessageCode.GET_TREE_SUCCESSFULLY.value
+        # A user with no tree is a valid empty collection, not a 404.
+        return PaginatedResponse[TreeRead](
+            message=MessageCode.GET_TREE_SUCCESSFULLY.value,
+            data=result,
+            total=len(result),
+            page=1,
+            page_size=len(result),
+            total_pages=1 if result else 0,
         )
     except HTTPException:
         raise

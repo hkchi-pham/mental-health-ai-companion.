@@ -8,7 +8,7 @@ class TreeBase(SQLModel):
     level: int
     growth_points: int
     health: int
-    last_water_at: datetime
+    last_water_at: Optional[datetime] = None
 
 class TreeCreate(TreeBase):
     user_id: str
@@ -19,12 +19,12 @@ class TreeRead(TreeBase):
     tree_type: str
     level: int
     health: int
-    last_water_at: datetime
+    last_water_at: Optional[datetime] = None
 
 class TreeUpdate(SQLModel):
     tree_type: str
     level: int
-    last_water_at: datetime
+    last_water_at: Optional[datetime] = None
 
 class TreeResponse(SQLModel):
     user_id: str
@@ -32,7 +32,7 @@ class TreeResponse(SQLModel):
     level: int
     growth_points: int
     health: int
-    last_water_at: datetime
+    last_water_at: Optional[datetime] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
     ended_at: Optional[datetime] = None
