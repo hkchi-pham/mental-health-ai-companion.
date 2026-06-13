@@ -35,6 +35,7 @@ class JournalResponse(SQLModel):
     id: str
     user_id: str
     title: str
+    emoji: str
     page: Dict 
     content: str
     visibility: str

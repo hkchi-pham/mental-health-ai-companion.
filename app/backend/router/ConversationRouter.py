@@ -28,6 +28,8 @@ def create_conversation(data: ConversationCreate,current_user: UserModel = Depen
         data.user_id = current_user.id  # Use .id not full UserModel
         conv = ConversationCrud.create_conversation(session, data)
         return {"message": MessageCode.CREATE_CONVERSATION_SUCCESSFULLY.value, "success": True}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -56,7 +58,7 @@ def search_all_conversations(
         )
         print(results)
         if not results:
-            return HTTPException(status_code=404, detail=MessageCode.CONVERSATION_NOT_FOUND.value)
+            raise HTTPException(status_code=404, detail=MessageCode.CONVERSATION_NOT_FOUND.value)
         
         return PaginatedResponse[ConversationResponse](
             message= MessageCode.GET_CONVERSATION_SUCCESSFULLY.value,
@@ -67,6 +69,8 @@ def search_all_conversations(
             total_pages=results["total_pages"]
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
@@ -80,7 +84,7 @@ def get_all_conversations(session: Session = Depends(get_db),current_user: UserM
         result =  ConversationCrud.get_all_conversations(session,current_user.id,page=1,page_size=10)
         print("got convo")
         if not result:
-            return HTTPException(status_code=404, detail=MessageCode.CONVERSATION_NOT_FOUND.value)
+            raise HTTPException(status_code=404, detail=MessageCode.CONVERSATION_NOT_FOUND.value)
         return PaginatedResponse[ConversationResponse](
             message="",
             data=result["items"],
@@ -89,6 +93,8 @@ def get_all_conversations(session: Session = Depends(get_db),current_user: UserM
             page_size=result["page_size"],
             total_pages=result["total_pages"]
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -103,11 +109,13 @@ def get_conversation(conv_id: str,current_user: UserModel = Depends(get_current_
         conv = ConversationCrud.get_conversation_by_id(session,current_user.id, conv_id)
         print("got conv by id")
         if conv==None:
-            return HTTPException(status_code=404, detail=MessageCode.CONVERSATION_NOT_FOUND.value)
+            raise HTTPException(status_code=404, detail=MessageCode.CONVERSATION_NOT_FOUND.value)
         return SuccessResponse[ConversationResponse](
             message=MessageCode.GET_CONVERSATION_SUCCESSFULLY.value,
             data=conv
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
         
@@ -121,8 +129,10 @@ def update_conversation(conv_id: str, data: ConversationUpdate,current_user: Use
     try: 
         conv = ConversationCrud.update_conversation(session, conv_id,current_user.id,data)
         if not conv:
-            return HTTPException(status_code=404, detail=MessageCode.CONVERSATION_NOT_FOUND.value)
-        return HTTPException(status_code=200, detail=MessageCode.UPDATE_CONVERSATION_SUCCESSFULLY.value)
+            raise HTTPException(status_code=404, detail=MessageCode.CONVERSATION_NOT_FOUND.value)
+        return SuccessResponse(message=MessageCode.UPDATE_CONVERSATION_SUCCESSFULLY.value)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -134,7 +144,9 @@ def delete_conversation(conv_id: str,current_user: UserModel = Depends(get_curre
     try: 
         success = ConversationCrud.delete_conversation(session, current_user.id,conv_id)
         if not success:
-            return HTTPException(status_code=404, detail=MessageCode.CONVERSATION_NOT_FOUND)
-        return HTTPException(status_code=200, detail=MessageCode.DELETE_CONVERSATION_SUCCESSFULLY.value)
+            raise HTTPException(status_code=404, detail=MessageCode.CONVERSATION_NOT_FOUND)
+        return SuccessResponse(message=MessageCode.DELETE_CONVERSATION_SUCCESSFULLY.value)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,6 +1,7 @@
 # app/security/token.py
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
+import os
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
@@ -8,7 +9,7 @@ from config.database import get_db
 from backend.models.UserModel import UserModel
 from backend.response.AuthResponse import TokenData
 
-SECRET_KEY = "yoursecretkey"
+SECRET_KEY = os.environ["JWT_SECRET_KEY", "HS256"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES =  30
 

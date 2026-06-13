@@ -61,6 +61,8 @@ def get_all_user(
             page_size=result["page_size"],
             total_pages=result["total_pages"]
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -86,7 +88,7 @@ def search_all_users(
         )
         print(results)
         if not results:
-            return HTTPException(status_code=404, detail=MessageCode.USER_NOT_FOUND.value)
+            raise HTTPException(status_code=404, detail=MessageCode.USER_NOT_FOUND.value)
         
     
         return PaginatedResponse[UserResponse](
@@ -98,6 +100,8 @@ def search_all_users(
             total_pages=results["total_pages"]
         )
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -113,11 +117,13 @@ def get_user_by_user_name(
     try:
         result = crud.get_user_by_user_name(db, user_name)
         if result == None:
-            return HTTPException(status_code=404, detail=MessageCode.USER_NOT_FOUND.value)
+            raise HTTPException(status_code=404, detail=MessageCode.USER_NOT_FOUND.value)
         return SuccessResponse[UserResponse](
             message=MessageCode.GET_USER_SUCCESSFULLY.value,
             data=result
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -133,7 +139,9 @@ def update_user(
     try:
         user_id = current_user.id
         result = crud.update_user(db, user_id, data)
-        return HTTPException(status_code=200, detail=MessageCode.UPDATE_USER_SUCCESSFULLY.value)
+        return SuccessResponse(message=MessageCode.UPDATE_USER_SUCCESSFULLY.value)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -148,9 +156,11 @@ def delete_user(current_user: UserModel = Depends(get_current_user), db: Session
         print(user_id)
         result = crud.delete_user(db, user_id)
         if not result:
-            return HTTPException(status_code=409, detail=MessageCode.USER_NOT_FOUND.value)
+            raise HTTPException(status_code=409, detail=MessageCode.USER_NOT_FOUND.value)
         print(result)
-        return HTTPException(status_code=200, detail=MessageCode.DELETE_USER_SUCCESSFULLY.value)
+        return SuccessResponse(message=MessageCode.DELETE_USER_SUCCESSFULLY.value)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

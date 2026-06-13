@@ -116,6 +116,8 @@ async def create_message(
             "provider": ai_result.metadata.get("provider", "unknown") if ai_result.metadata else "unknown"
         }
         
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"=== ERROR in create_message: {str(e)} ===")
         traceback.print_exc()
@@ -202,6 +204,8 @@ async def chat_with_ai(
             provider=ai_result.metadata.get("provider", "unknown") if ai_result.metadata else "unknown"
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -230,7 +234,7 @@ def search_all_messages(
         )
 
         if not results:
-            return HTTPException(status_code=404, detail=MessageCode.MESSAGE_NOT_FOUND.value)
+            raise HTTPException(status_code=404, detail=MessageCode.MESSAGE_NOT_FOUND.value)
         
         return PaginatedResponse[MessageResponse](
             message=MessageCode.GET_MESSAGE_SUCCESSFULLY.value,
@@ -240,6 +244,8 @@ def search_all_messages(
             page_size=results["page_size"],
             total_pages=results["total_pages"]
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -250,12 +256,12 @@ def search_all_messages(
 def get_messages_by_user(current_user: UserModel = Depends(get_current_user), page: int = 1, page_size: int = 10, session: Session = Depends(get_db)):
     try:
         if current_user is None :
-            return HTTPException(status_code=404, detail=MessageCode.USER_NOT_FOUND.value)
+            raise HTTPException(status_code=404, detail=MessageCode.USER_NOT_FOUND.value)
         
         result =  MessageCrud.get_messages_by_user(session, user_id=current_user.id, page=1,page_size=10)
 
         if not result:
-            return HTTPException(status_code=404, detail=MessageCode.MESSAGE_NOT_FOUND.value)
+            raise HTTPException(status_code=404, detail=MessageCode.MESSAGE_NOT_FOUND.value)
 
         return PaginatedResponse[MessageRead](
             message=MessageCode.GET_MESSAGE_SUCCESSFULLY.value,
@@ -265,6 +271,8 @@ def get_messages_by_user(current_user: UserModel = Depends(get_current_user), pa
             page_size=result["page_size"],
             total_pages=result["total_pages"]
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 # READ ALL BY CONVO
@@ -275,10 +283,10 @@ def get_messages_by_convo(convo_id: str,current_user: UserModel = Depends(get_cu
     try:
         convo = convo_id
         if convo == None:
-            return HTTPException(status_code=404, detail=MessageCode.CONVERSATION_NOT_FOUND)
+            raise HTTPException(status_code=404, detail=MessageCode.CONVERSATION_NOT_FOUND)
         result =  MessageCrud.get_messages_by_convo(session, user_id=current_user.id,convo_id=convo_id,page=1, page_size=10)
         if not result:
-            return HTTPException(status_code=404, detail=MessageCode.MESSAGE_NOT_FOUND.value)
+            raise HTTPException(status_code=404, detail=MessageCode.MESSAGE_NOT_FOUND.value)
         return PaginatedResponse[MessageRead](
             message=MessageCode.GET_MESSAGE_SUCCESSFULLY.value,
             data=result["items"],
@@ -287,6 +295,8 @@ def get_messages_by_convo(convo_id: str,current_user: UserModel = Depends(get_cu
             page_size=result["page_size"],
             total_pages=result["total_pages"]
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -299,11 +309,13 @@ def get_message(message_id: str,current_user: UserModel = Depends(get_current_us
     try: 
         result = MessageCrud.get_message_by_id(session, message_id,current_user.id)
         if not result:
-            return HTTPException(status_code=404, detail=MessageCode.MESSAGE_NOT_FOUND.value)
+            raise HTTPException(status_code=404, detail=MessageCode.MESSAGE_NOT_FOUND.value)
         return SuccessResponse[MessageResponse](
             message=MessageCode.GET_MESSAGE_SUCCESSFULLY.value,
             data = result
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
         

@@ -26,7 +26,9 @@ def create_contact_alert_log(data: ContactAlertLogCreate,current_user: UserModel
     try:
         data.user_id = current_user.id
         contact_alert_log = ContactAlertLogCrud.create_contact_alert_log(session, data)
-        return HTTPException(status_code=200, detail=MessageCode.CREATE_CONTACT_ALERT_LOG_SUCCESSFULLY.value)
+        return SuccessResponse(message=MessageCode.CREATE_CONTACT_ALERT_LOG_SUCCESSFULLY.value)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -63,7 +65,7 @@ def search_all_contact_alert_logs(
         )
 
         if not results:
-            return HTTPException(status_code=404, detail=MessageCode.CONTACT_ALERT_LOG_NOT_FOUND.value)
+            raise HTTPException(status_code=404, detail=MessageCode.CONTACT_ALERT_LOG_NOT_FOUND.value)
         
         return PaginatedResponse[ContactAlertLogRead](
             message=MessageCode.GET_CONTACT_ALERT_LOG_SUCCESSFULLY.value,
@@ -73,6 +75,8 @@ def search_all_contact_alert_logs(
             page_size=results["page_size"],
             total_pages=results["total_pages"]
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) 
 
@@ -84,7 +88,7 @@ def get_all_contact_alert_log(session: Session = Depends(get_db),current_user: U
     try:
         result =  ContactAlertLogCrud.get_all_contact_alert_logs(session,current_user.id,page=1,page_size=10)
         if not result:
-            return HTTPException(status_code=404, detail=MessageCode.CONTACT_ALERT_LOG_NOT_FOUND.value)
+            raise HTTPException(status_code=404, detail=MessageCode.CONTACT_ALERT_LOG_NOT_FOUND.value)
         return PaginatedResponse[ContactAlertLogRead](
             message=MessageCode.GET_CONTACT_ALERT_LOG_SUCCESSFULLY.value,
             data=result["items"],
@@ -93,6 +97,8 @@ def get_all_contact_alert_log(session: Session = Depends(get_db),current_user: U
             page_size=result["page_size"],
             total_pages=result["total_pages"]
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -105,8 +111,10 @@ def get_contact_alert_log(contact_alert_log_id: str,current_user: UserModel = De
     try: 
         conv = ContactAlertLogCrud.get_contact_alert_log_by_id(session,current_user.id, contact_alert_log_id)
         if not conv:
-            return HTTPException(status_code=404, detail=MessageCode.CONTACT_ALERT_LOG_NOT_FOUND.value)
-        return HTTPException(status_code=200, detail=MessageCode.GET_CONTACT_ALERT_LOG_SUCCESSFULLY.value)
+            raise HTTPException(status_code=404, detail=MessageCode.CONTACT_ALERT_LOG_NOT_FOUND.value)
+        return SuccessResponse(message=MessageCode.GET_CONTACT_ALERT_LOG_SUCCESSFULLY.value)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
         
@@ -120,8 +128,10 @@ def update_contact_alert_log(contact_alert_log_id: str, data: ContactAlertLogUpd
     try: 
         contact_alert_log = ContactAlertLogCrud.update_contact_alert_log(session,current_user.id,contact_alert_log_id,data)
         if not contact_alert_log:
-            return HTTPException(status_code=404, detail=MessageCode.CONTACT_ALERT_LOG_NOT_FOUND.value)
-        return HTTPException(status_code=200, detail=MessageCode.UPDATE_CONTACT_ALERT_LOG_SUCCESSFULLY.value)
+            raise HTTPException(status_code=404, detail=MessageCode.CONTACT_ALERT_LOG_NOT_FOUND.value)
+        return SuccessResponse(message=MessageCode.UPDATE_CONTACT_ALERT_LOG_SUCCESSFULLY.value)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -133,7 +143,9 @@ def delete_contact_alert_log(contact_alert_log_id: str,current_user: UserModel =
     try: 
         success = ContactAlertLogCrud.delete_contact_alert_log(session,current_user.id, contact_alert_log_id)
         if not success:
-            return HTTPException(status_code=404, detail=MessageCode.CONTACT_ALERT_LOG_NOT_FOUND)
-        return HTTPException(status_code=200, detail=MessageCode.DELETE_CONTACT_ALERT_LOG_SUCCESSFULLY.value)
+            raise HTTPException(status_code=404, detail=MessageCode.CONTACT_ALERT_LOG_NOT_FOUND)
+        return SuccessResponse(message=MessageCode.DELETE_CONTACT_ALERT_LOG_SUCCESSFULLY.value)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

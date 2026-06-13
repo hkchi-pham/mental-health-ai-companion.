@@ -5,7 +5,7 @@ from .BaseModel import BaseModel
 
 
 class TreeModel(BaseModel, table=True):
-    __tablename__ = "tree"
+    __tablename__ = "trees"
 
     user_id: str = Field(nullable=False)
     tree_type: str = Field(nullable=False,max_length=128)
@@ -13,4 +13,5 @@ class TreeModel(BaseModel, table=True):
     growth_points: int = 0
     health: int = 100
     last_water_at: Optional[datetime] = None
+    ended_at: Optional[datetime] = None
     

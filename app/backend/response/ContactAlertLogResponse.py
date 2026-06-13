@@ -33,6 +33,7 @@ class ContactAlertLogUpdate(SQLModel):
 class ContactAlertLogResponse(SQLModel):
     id: str
     user_id: str
+    alert_id: str
     alert_type: str
     trigger_reason: Optional[str] 
     trigger_data: Optional[dict] 

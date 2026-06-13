@@ -4,7 +4,7 @@ from typing import Optional
 
 class AuthToken(SQLModel):
     access_token: str
-    expires_in: time 
+    expires_in: int
     user_name: str
     user_id: str
 

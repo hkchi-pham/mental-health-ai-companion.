@@ -26,7 +26,7 @@ class MoodLogResponse(SQLModel):
     conversation_id: str
     mood: str
     note: str
-    created_at: str
+    created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     ended_at: Optional[datetime] = None
     created_by: Optional[str] = None
