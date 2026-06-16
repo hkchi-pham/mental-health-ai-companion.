@@ -14,6 +14,6 @@ class BaseModel(SQLModel):
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: Optional[datetime] = Field(default_factory=datetime.now)
     deleted_at: Optional[datetime] = Field(default=None, nullable=True)
-    created_by: str = None
+    created_by: Optional[str] = None
     updated_by: Optional[str] = None
     

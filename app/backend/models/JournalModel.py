@@ -1,6 +1,6 @@
 from sqlmodel import Field, Column, String
 from sqlalchemy import CheckConstraint, JSON
-from typing import Optional, Any, Dict
+from typing import Optional, Any, Dict, List
 from datetime import datetime
 from .BaseModel import BaseModel
 from uuid import uuid4
@@ -13,7 +13,7 @@ class JournalModel(BaseModel, table=True):
     user_id: str = Field(nullable=False)
     title: str = Field(nullable=False)
     emoji: str = Field(nullable=True)
-    page: Dict[Any] = Field(default=[], sa_column=Column(JSON))
+    page: List[Any] = Field(default=[], sa_column=Column(JSON))
     content: str = Field(nullable=False)
     visibility: str = Field(
         sa_column=Column(

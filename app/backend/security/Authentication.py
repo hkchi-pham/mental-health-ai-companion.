@@ -9,7 +9,7 @@ from config.database import get_db
 from backend.models.UserModel import UserModel
 from backend.response.AuthResponse import TokenData
 
-SECRET_KEY = os.environ["JWT_SECRET_KEY", "HS256"]
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "HS256")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES =  30
 
