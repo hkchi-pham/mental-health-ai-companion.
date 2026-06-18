@@ -5,6 +5,8 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from backend.router import ConversationRouter, MessageRouter, UserRouter, MoodLogRouter, JournalRouter, ContactAlertLogRouter, ContactAlertRouter, AuthRouter, TreeRouter, ActionRouter
 from backend.router import ConfigRouter
+from backend.router import GardenItemRouter, GardenDecorationRouter, GardenBadgeRouter, UserMeRouter
+from config.bootstrap import init_garden_tables
 
 
 app = FastAPI(
@@ -33,9 +35,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-    
+
+
+@app.on_event("startup")
+def _bootstrap_garden_tables():
+    init_garden_tables()
+
 
 app.include_router(ConversationRouter.router, prefix="/api/v1")
+app.include_router(UserMeRouter.router, prefix="/api/v1")
 app.include_router(UserRouter.router, prefix="/api/v1")
 app.include_router(MessageRouter.router, prefix="/api/v1")
 app.include_router(MoodLogRouter.router, prefix="/api/v1")
@@ -46,3 +54,6 @@ app.include_router(AuthRouter.router, prefix="/api/v1")
 app.include_router(TreeRouter.router, prefix="/api/v1")
 app.include_router(ConfigRouter.router, prefix="/api/v1")
 app.include_router(ActionRouter.router, prefix="/api/v1")
+app.include_router(GardenItemRouter.router, prefix="/api/v1")
+app.include_router(GardenDecorationRouter.router, prefix="/api/v1")
+app.include_router(GardenBadgeRouter.router, prefix="/api/v1")
