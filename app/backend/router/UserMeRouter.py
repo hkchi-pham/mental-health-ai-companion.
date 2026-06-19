@@ -34,7 +34,7 @@ def get_me(
             )
         return SuccessResponse(
             message=MessageCode.GET_CURRENCY_SUCCESSFULLY.value,
-            data=user,
+            data=MeRead.model_validate(user),
         )
     except HTTPException:
         raise
@@ -69,7 +69,7 @@ def update_currency(
             )
         return SuccessResponse(
             message=MessageCode.UPDATE_CURRENCY_SUCCESSFULLY.value,
-            data=user,
+            data=MeRead.model_validate(user),
         )
     except HTTPException:
         raise
