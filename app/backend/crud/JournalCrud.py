@@ -4,11 +4,16 @@ from backend.models.JournalModel import JournalModel
 from backend.response.JournalResponse import JournalCreate, JournalUpdate, JournalPageUpdate
 from backend import utils
 from datetime import datetime
+from uuid import uuid4
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import func, or_, desc, asc
 
-def create_journal(session: Session, data: JournalCreate):
-    journal = JournalModel(**data.dict())
+def create_journal(session: Session, data: JournalCreate, user_id: str):
+    payload = data.dict()
+    payload["user_id"] = user_id
+    if not payload.get("color"):
+        payload["color"] = "green"
+    journal = JournalModel(**payload)
     session.add(journal)
     session.commit()
     session.refresh(journal)
@@ -97,20 +102,20 @@ def get_all_journals(session: Session,user_id:str, page: int =1,page_size: int =
 
 
 def update_journal(session: Session,user_id:str, journal_id: str, data: JournalUpdate):
-    print("start updating journal")
-    journal = session.exec(select(JournalModel).where(JournalModel.id == journal_id, JournalModel.user_id==user_id))
-    print("journal")
+    journal = session.exec(
+        select(JournalModel).where(
+            JournalModel.id == journal_id,
+            JournalModel.user_id == user_id,
+            JournalModel.deleted_at.is_(None),
+        )
+    ).first()
     if not journal:
         return None
-    for key, value in data.dict(exclude_unset=True).items():
+    for key, value in data.dict(exclude_unset=False).items():
         setattr(journal, key, value)
-    print("key,value")
     session.add(journal)
-    print("123")
     session.commit()
-    print("commit")
     session.refresh(journal)
-    print("done")
     return True
 
 def update_journal_page(session: Session, user_id: str, journal_id: str, data: JournalPageUpdate):
@@ -132,11 +137,35 @@ def update_journal_page(session: Session, user_id: str, journal_id: str, data: J
     else:
         next_index = "1"
     
+    entry_id = data.id if getattr(data, "id", None) else str(uuid4())
     journal.page[next_index] = {
+        "id": entry_id,
         "content": data.content,
         "created_at": utils.get_current_time()
     }
 
+    session.add(journal)
+    session.commit()
+    session.refresh(journal)
+
+    return True
+
+
+def replace_journal_page(session: Session, user_id: str, journal_id: str, page: dict):
+    journal = session.exec(
+        select(JournalModel).where(
+            JournalModel.id == journal_id,
+            JournalModel.user_id == user_id,
+            JournalModel.deleted_at.is_(None)
+        )
+    ).first()
+
+    if not journal:
+        return None
+
+    # Whole-page replace. Reassign the entire dict so SQLAlchemy's JSON
+    # mutation tracking flushes the change, then re-add the row.
+    journal.page = page
     session.add(journal)
     session.commit()
     session.refresh(journal)
