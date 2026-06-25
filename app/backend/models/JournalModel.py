@@ -22,7 +22,8 @@ class JournalModel(BaseModel, table=True):
             nullable=False,
         )
     )
-    
+    color: Optional[str] = Field(default="green", nullable=True)
+
     
 
 
