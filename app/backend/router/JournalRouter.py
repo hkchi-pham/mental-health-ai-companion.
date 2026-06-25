@@ -8,7 +8,8 @@ from backend.response.JournalResponse import (
     JournalRead,
     JournalUpdate,
     JournalResponse,
-    JournalPageUpdate
+    JournalPageUpdate,
+    JournalPageReplace
 )
 from backend.response.CommonResponse import SuccessResponse, MessageCode, ErrorResponse, PaginatedResponse
 from datetime import datetime
@@ -143,6 +144,25 @@ def update_journal_page(
         journal = JournalCrud.update_journal_page(session=session, user_id=current_user.id, journal_id=journal_id,data=data)
         if not journal:
             raise HTTPException(status_code=404, detail=MessageCode.JOURNAL_NOT_FOUND)
+        return SuccessResponse(message=MessageCode.UPDATE_JOURNAL_SUCCESSFULLY.value)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# REPLACE PAGE (whole-page replace — used for single-entry edit/delete)
+@router.put("/{journal_id}/page",
+            responses={404: {"model": ErrorResponse}, 500: {"model": ErrorResponse}})
+def replace_journal_page(
+    journal_id: str,
+    data: JournalPageReplace,
+    current_user: UserModel = Depends(get_current_user),
+    session: Session = Depends(get_db)
+):
+    try:
+        journal = JournalCrud.replace_journal_page(session, current_user.id, journal_id, data.page)
+        if not journal:
+            raise HTTPException(status_code=404, detail=MessageCode.JOURNAL_NOT_FOUND.value)
         return SuccessResponse(message=MessageCode.UPDATE_JOURNAL_SUCCESSFULLY.value)
     except HTTPException:
         raise
