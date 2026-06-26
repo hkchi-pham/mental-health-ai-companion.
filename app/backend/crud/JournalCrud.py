@@ -129,20 +129,25 @@ def update_journal_page(session: Session, user_id: str, journal_id: str, data: J
     if not journal:
         return None
     
-    if journal.page is None:
-        journal.page = {}
-    
-    if journal.page:
-        next_index = str(max(map(int, journal.page.keys())) + 1)
+    # Build a NEW dict and reassign it. In-place mutation of a JSON column
+    # (journal.page[k] = ...) is NOT detected by SQLAlchemy's change tracking,
+    # so commit() would silently drop the new entry. Reassigning the attribute
+    # marks it dirty and forces the write. Also tolerate page being None / a list
+    # (the model's legacy default) by starting fresh.
+    current = dict(journal.page) if isinstance(journal.page, dict) else {}
+
+    if current:
+        next_index = str(max(map(int, current.keys())) + 1)
     else:
         next_index = "1"
-    
+
     entry_id = data.id if getattr(data, "id", None) else str(uuid4())
-    journal.page[next_index] = {
+    current[next_index] = {
         "id": entry_id,
         "content": data.content,
         "created_at": utils.get_current_time()
     }
+    journal.page = current
 
     session.add(journal)
     session.commit()
