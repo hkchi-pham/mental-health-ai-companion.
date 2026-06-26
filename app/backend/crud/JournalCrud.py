@@ -17,7 +17,7 @@ def create_journal(session: Session, data: JournalCreate, user_id: str):
     session.add(journal)
     session.commit()
     session.refresh(journal)
-    return True
+    return journal
 
 def search_journals(
     session: Session,

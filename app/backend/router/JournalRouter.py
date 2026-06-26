@@ -21,11 +21,19 @@ router = APIRouter(
 
 
 # CREATE
-@router.post("/", responses={404: {"model": ErrorResponse}, 500: {"model": ErrorResponse}})
+@router.post("/",
+             response_model=SuccessResponse[JournalResponse],
+             responses={404: {"model": ErrorResponse}, 500: {"model": ErrorResponse}})
 def create_journal(data: JournalCreate,current_user: UserModel = Depends(get_current_user), session: Session = Depends(get_db)):
     try:
         journal = JournalCrud.create_journal(session, data,current_user.id)
-        return SuccessResponse(message=MessageCode.CREATE_JOURNAL_SUCCESSFULLY.value)
+        # Return the created journal (with its server id) so the client can adopt
+        # the real identity — POST previously returned only a message, which left
+        # the client holding a local temp id and broke entry/edit/delete calls.
+        return SuccessResponse[JournalResponse](
+            message=MessageCode.CREATE_JOURNAL_SUCCESSFULLY.value,
+            data=journal
+        )
     except HTTPException:
         raise
     except Exception as e:
