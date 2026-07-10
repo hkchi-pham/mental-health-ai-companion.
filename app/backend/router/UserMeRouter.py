@@ -26,15 +26,19 @@ def get_me(
 ):
     """Return the authenticated user's identity + currency fields."""
     try:
-        user = CurrencyCrud.get_me(db, current_user.id)
-        if user is None:
+        result = CurrencyCrud.get_me_with_counts(db, current_user.id)
+        if result is None:
             raise HTTPException(
                 status_code=404,
                 detail=MessageCode.USER_NOT_FOUND.value,
             )
+        me = MeRead.model_validate(result["user"])
+        me.journal_count = result["journal_count"]
+        me.conversation_count = result["conversation_count"]
+        me.badge_count = result["badge_count"]
         return SuccessResponse(
             message=MessageCode.GET_CURRENCY_SUCCESSFULLY.value,
-            data=MeRead.model_validate(user),
+            data=me,
         )
     except HTTPException:
         raise

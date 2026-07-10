@@ -20,3 +20,6 @@ class MeRead(SQLModel):
     water_units: int
     tree_grown: int
     created_at: Optional[datetime] = None
+    journal_count: int = 0
+    conversation_count: int = 0
+    badge_count: int = 0
