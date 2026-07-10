@@ -12,3 +12,8 @@ class AuthToken(SQLModel):
 class TokenData(SQLModel):
     username: Optional[str] = None
     user_id: Optional[str] = None
+
+
+class PasswordChange(SQLModel):
+    old_password: str
+    new_password: str
