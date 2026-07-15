@@ -11,7 +11,10 @@ from backend.response.AuthResponse import TokenData
 
 SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "HS256")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES =  30
+# 30 days — sessions persist across launches so users log in once, not every
+# 30 minutes. No refresh-token flow, so this long-lived access token is the
+# single knob controlling how often re-login is required.
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 30  # 43200 minutes = 30 days
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
