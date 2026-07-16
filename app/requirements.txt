@@ -42,3 +42,4 @@ numpy
 scipy
 openai>=1.0.0
 google-generativeai>=0.3.0
+anthropic

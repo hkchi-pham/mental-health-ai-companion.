@@ -3,6 +3,7 @@ from .factory import get_ai_service, AIProviderType
 from .openai_service import OpenAIService
 from .gemini_service import GeminiService
 from .huggingface_service import HuggingFaceService
+from .anthropic_service import AnthropicService
 
 __all__ = [
     "BaseAIService",
@@ -11,4 +12,5 @@ __all__ = [
     "OpenAIService",
     "GeminiService",
     "HuggingFaceService",
+    "AnthropicService",
 ]

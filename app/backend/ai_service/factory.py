@@ -1,6 +1,6 @@
 """
 Factory for creating AI service instances.
-Supports OpenAI, Gemini, and HuggingFace (disabled by default).
+Supports OpenAI, Gemini, HuggingFace (disabled by default), and Anthropic (Claude).
 """
 
 import os
@@ -18,6 +18,7 @@ class AIProviderType(str, Enum):
     OPENAI = "openai"
     GEMINI = "gemini"
     HUGGINGFACE = "huggingface"
+    ANTHROPIC = "anthropic"
 
 
 _service_cache: dict[AIProviderType, BaseAIService] = {}
@@ -82,7 +83,11 @@ def _create_service(provider_type: AIProviderType) -> BaseAIService:
     elif provider_type == AIProviderType.HUGGINGFACE:
         from .huggingface_service import HuggingFaceService
         return HuggingFaceService()
-    
+
+    elif provider_type == AIProviderType.ANTHROPIC:
+        from .anthropic_service import AnthropicService
+        return AnthropicService()
+
     else:
         raise ValueError(f"Unknown provider type: {provider_type}")
 
