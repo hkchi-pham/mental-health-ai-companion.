@@ -294,7 +294,7 @@ SELECT id, kw, wt, 'keyword' FROM emotions, unnest(
     ROW('I keep ignoring messages',0.90)
 
   ]::text_weight[]
-) AS t(kw text, wt numeric)
+) AS t(kw, wt)
 WHERE slug='buon'
 ON CONFLICT DO NOTHING;
 
@@ -495,7 +495,7 @@ SELECT id, kw, wt, 'keyword' FROM emotions, unnest(
     ROW('there’s a heavy pressure inside',0.92)
 
   ]::text_weight[]
-) AS t(kw text, wt numeric)
+) AS t(kw, wt)
 WHERE slug='lo_lang'
 ON CONFLICT DO NOTHING;
 
@@ -702,7 +702,7 @@ SELECT id, kw, wt, 'keyword' FROM emotions, unnest(
     ROW('there’s just no energy left inside',0.92),
     ROW('I don’t feel ready to push myself',0.90)
   ]::text_weight[]
-) AS t(kw text, wt numeric)
+) AS t(kw, wt)
 WHERE slug='met_moi'
 ON CONFLICT DO NOTHING;
 
@@ -884,7 +884,7 @@ SELECT id, kw, wt, 'keyword' FROM emotions, unnest(
     ROW('today feels nice overall',0.85),
     ROW('I feel like myself again',0.88)
   ]::text_weight[]
-) AS t(kw text, wt numeric)
+) AS t(kw, wt)
 WHERE slug='vui'
 ON CONFLICT DO NOTHING;
 
@@ -1106,7 +1106,7 @@ SELECT id, kw, wt, 'keyword' FROM emotions, unnest(
     ROW('I don’t want to miss this chance',0.92),
     ROW('I’m moving with intention',0.90)
   ]::text_weight[]
-) AS t(kw text, wt numeric)
+) AS t(kw, wt)
 WHERE slug='co_dong_luc'
 ON CONFLICT DO NOTHING;
 
@@ -1318,7 +1318,7 @@ SELECT id, kw, wt, 'keyword' FROM emotions, unnest(
     ROW('I don’t want to continue this conversation',0.92)
     
   ]::text_weight[]
-) AS t(kw text, wt numeric)
+) AS t(kw, wt)
 WHERE slug='tuc_gian'
 ON CONFLICT DO NOTHING;
 
@@ -1535,7 +1535,7 @@ SELECT id, kw, wt, 'keyword' FROM emotions, unnest(
     ROW('I don’t know how to make things right',0.94),
     ROW('I don’t know why I did that', 0.87)
   ]::text_weight[]
-) AS t(kw text, wt numeric)
+) AS t(kw, wt)
 WHERE slug='toi_loi'
 ON CONFLICT DO NOTHING;
 
@@ -1768,7 +1768,7 @@ SELECT id, kw, wt, 'keyword' FROM emotions, unnest(
     ROW('thinking doesn’t feel solid',0.92),
     ROW('everything feels unresolved',0.90)
       ]::text_weight[]
-) AS t(kw text, wt numeric)
+) AS t(kw, wt)
 WHERE slug='boi_roi'
 ON CONFLICT DO NOTHING;
 
@@ -1983,7 +1983,7 @@ SELECT id, kw, wt, 'keyword' FROM emotions, unnest(
     ROW('uneasy without a clear reason',0.88)
 
   ]::text_weight[]
-) AS t(kw text, wt numeric)
+) AS t(kw, wt)
 WHERE slug='so_hai'
 ON CONFLICT DO NOTHING;
 
@@ -2138,7 +2138,7 @@ SELECT id, kw, wt, 'keyword' FROM emotions, unnest(
     ROW('reaction stays mild',0.88),
     ROW('nothing feels particularly strong',0.92)
   ]::text_weight[]
-) AS t(kw text, wt numeric)
+) AS t(kw, wt)
 WHERE slug='trung_lap'
 ON CONFLICT DO NOTHING;
 
@@ -2485,7 +2485,7 @@ FROM needs, unnest(
     ROW('career direction',0.6),
     ROW('what should I choose',0.6),
     ROW('no clear plan',0.7),
-    ROW('stuck with decisions',0.7)
+    ROW('stuck with decisions',0.7),
     ROW('muốn tiến lên',0.90),
     ROW('muốn có ước mơ',0.90),
     ROW('ước mơ',0.85),
@@ -2505,7 +2505,7 @@ FROM needs, unnest(
     ROW('nhận biết bản thân',0.95),
     ROW('tự hiểu mình',0.90),
     ROW('khám phá bản thân',0.95),
-    ROW('tìm chính mình',1.00),
+    ROW('tìm chính mình',1.00)
   ]::text_weight[]
 ) AS t(kw, wt)
 WHERE slug='dinh_huong'
@@ -2679,10 +2679,10 @@ FROM needs, unnest(
     ROW('feel unnoticed',0.7),
     ROW('no one cares',0.6),
     ROW('nobody cares',0.6),
-    ROW('cần ai đó ghi nhận chút thôi',0.65)
+    ROW('cần ai đó ghi nhận chút thôi',0.65),
     ROW('không ai quan tâm',0.7),
     ROW('chả ai để ý',0.75),
-    ROW('chả ai quan tâm',0.75),
+    ROW('chả ai quan tâm',0.75)
   ]::text_weight[]
 ) AS t(kw, wt)
 WHERE slug='cong_nhan'
@@ -3359,7 +3359,7 @@ FROM needs, unnest(
     ROW('nỗi buồn khó mà nguôi', 0.9),
     ROW('mọi thứ vượt ngoài tầm kiểm soát', 0.9),
     ROW('tâm trạng xuống đáy', 0.9),
-    ROW('cảm giác muốn biến mất cho nhẹ', 1.0)
+    ROW('cảm giác muốn biến mất cho nhẹ', 1.0),
 
     ROW('feeling stuck forever', 1.0),
     ROW('can’t see a way out', 1.0),
@@ -3743,7 +3743,7 @@ unnest(ARRAY[
   ROW('hít thở', 0.9),
   ROW('lo âu', 0.8),
   ROW('căng thẳng', 0.8),
-  ROW('anxious', 0.7)
+  ROW('anxious', 0.7),
   ROW('khó thở', 1.0),
   ROW('nghẹt thở', 1.0),
   ROW('không thở được', 1.0),
@@ -3866,7 +3866,7 @@ unnest(ARRAY[
   ROW('how to calm my body fast', 0.95),
   ROW('need to slow my breath', 1.0)
 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_breathing_478'
 ON CONFLICT DO NOTHING;
 
@@ -3974,7 +3974,7 @@ unnest(ARRAY[
   ROW('i can talk now', 0.7),
   ROW('i am stable enough', 0.7),
   ROW('ready to move on', 0.7)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_breathing_478'
 ON CONFLICT DO NOTHING;
 
@@ -3984,7 +3984,7 @@ FROM actions a,
 unnest(ARRAY[
   ROW('vẫn căng thẳng', 1.0),
   ROW('không bớt lo', 0.9),
-  ROW('không đỡ chút nào', 0.9)
+  ROW('không đỡ chút nào', 0.9),
   ROW('thở không giúp gì', 1.0),
   ROW('mình thở mà không đỡ', 1.0),
   ROW('càng thở càng khó chịu', 0.95),
@@ -4066,7 +4066,7 @@ unnest(ARRAY[
   ROW('i dont feel better', 0.9),
   ROW('i want to pause', 0.75),
   ROW('lets try something else', 0.85)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_breathing_478'
 ON CONFLICT DO NOTHING;
 
@@ -4164,12 +4164,12 @@ unnest(ARRAY[
   ROW('lets slow the breath for a few cycles', 0.8),
   ROW('you can pause and focus on breathing', 0.8),
 
-  ROW("if you're okay with it, we can begin now", 0.75),
+  ROW('if you''re okay with it, we can begin now', 0.75),
   ROW('would you like to try this now', 0.75),
   ROW('we can try just a little', 0.75),
   ROW('do you want me to guide your breathing', 0.75),
   ROW('lets start gently', 0.75)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_breathing_478'
 ON CONFLICT DO NOTHING;
 
@@ -4273,7 +4273,7 @@ unnest(ARRAY[
   ROW('my thoughts are pulling me away', 0.8),
   ROW('i cant interrupt the thought loop', 0.8),
   ROW('i need to ground myself', 0.8)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_grounding_54321'
 ON CONFLICT DO NOTHING;
 
@@ -4420,7 +4420,7 @@ unnest(ARRAY[
   ROW('i feel capable again', 0.8),
   ROW('i feel back to normal', 0.8)
 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_grounding_54321'
 ON CONFLICT DO NOTHING;
 
@@ -4587,7 +4587,7 @@ unnest(ARRAY[
   ROW('still drifting mentally', 0.7),             
   ROW('still not regulated', 0.7),                 
   ROW('still not stabilized', 0.7)                 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_grounding_54321'
 ON CONFLICT DO NOTHING;
 
@@ -4748,7 +4748,7 @@ unnest(ARRAY[
   ROW('try focusing on a safe space', 0.7),                           
   ROW('try continuing grounding differently', 0.7),                 
   ROW('try staying with the present a bit longer', 0.7)     
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_grounding_54321'
 ON CONFLICT DO NOTHING;
 
@@ -4897,7 +4897,7 @@ unnest(ARRAY[
   ROW('lack of openness', 0.7),                    
   ROW('home feels suffocating', 0.7),               
   ROW('want a more open space', 0.7)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_walk_outdoor'
 ON CONFLICT DO NOTHING;
 
@@ -5049,7 +5049,7 @@ unnest(ARRAY[
   ROW(' space reduced mental tension', 0.8),       
   ROW('felt clearer', 0.7),        
   ROW('overall feeling improved  ', 0.9) 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_walk_outdoor'
 ON CONFLICT DO NOTHING;
 
@@ -5200,7 +5200,7 @@ unnest(ARRAY[
   ROW('walk did not help settle emotions', 0.7),            
   ROW('still not feeling better after going outside', 0.7)                 
 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_walk_outdoor'
 ON CONFLICT DO NOTHING;
 
@@ -5363,7 +5363,7 @@ unnest(ARRAY[
   ROW('a moment of outdoor breathing space is enough', 0.7),  
   ROW('nothing else needs attention', 0.7),                   
   ROW('things are okay as they are right now', 0.7)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_walk_outdoor'
 ON CONFLICT DO NOTHING;
 
@@ -5525,7 +5525,7 @@ unnest(ARRAY[
   ROW('unable to open new perspectives', 0.8),     
   ROW('absolute thinking patterns', 0.8),           
   ROW('believing thoughts are correct', 0.8)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_reframe'
 ON CONFLICT DO NOTHING;
 
@@ -5750,9 +5750,9 @@ unnest(ARRAY[
   -- 69
   ROW('thấy có thể cho bản thân thêm thời gian', 0.95),
   -- 70
-  ROW('nhận ra suy nghĩ mới dễ chịu hơn', 1.0),
+  ROW('nhận ra suy nghĩ mới dễ chịu hơn', 1.0)
 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_reframe'
 ON CONFLICT DO NOTHING;
 
@@ -5891,7 +5891,7 @@ unnest(ARRAY[
   ROW('not open to a new perspective yet', 1.0),
   ROW('this way of thinking feels fixed', 1.0),
   ROW('unable to see beyond this thought', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_reframe'
 ON CONFLICT DO NOTHING;
 
@@ -6027,7 +6027,7 @@ unnest(ARRAY[
   ROW('what happens if pressure is reduced', 0.95),
   ROW('is there a more flexible way to see this', 1.0)
 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_reframe'
 ON CONFLICT DO NOTHING;
 
@@ -6161,7 +6161,7 @@ unnest(ARRAY[
   ROW('emotional response does not match the situation', 1.0),
   ROW('reaction after the event feels confusing', 0.95),
   ROW('the thought appeared automatically in that situation', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_thought_log'
 ON CONFLICT DO NOTHING;
 
@@ -6292,7 +6292,7 @@ ROW('thoughts feel less chaotic', 0.75),
 ROW('mind feels less overwhelmed', 0.75),
 ROW('easier to breathe mentally', 0.75),
 ROW('feels more balanced', 0.75)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_thought_log'
 ON CONFLICT DO NOTHING;
 
@@ -6408,7 +6408,7 @@ unnest(ARRAY[
   ROW('still feel blocked', 0.8),
   ROW('hard to write when thoughts are racing', 0.8),
   ROW('do not know how to structure this', 0.8)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_thought_log'
 ON CONFLICT DO NOTHING;
 
@@ -6472,7 +6472,7 @@ unnest(ARRAY[
   ROW('a few words are enough', 1.0),
   ROW('you can start anywhere', 1.0),
   ROW('there is no right or wrong way to write', 1.0),
-  ROW('try writing the thought that repeats the most' 0.95),
+  ROW('try writing the thought that repeats the most', 0.95),
   ROW('you can write the thought that feels heaviest', 0.95),
   ROW('just note the thought that feels uncomfortable', 0.95),
   ROW('write the one that stands out the most', 0.95),
@@ -6515,7 +6515,7 @@ unnest(ARRAY[
   ROW('you can write it as questions too', 0.8),
   ROW('you do not need to understand everything now', 0.8),
   ROW('starting is already enough', 0.8)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_thought_log'
 ON CONFLICT DO NOTHING;
 
@@ -6688,7 +6688,7 @@ ROW('attention feels pulled away', 0.8),
 ROW('mind keeps pulling off task', 0.8),
 ROW('thoughts dominate attention', 0.8),
 ROW('focus feels out of control', 0.8)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_focus_control'
 ON CONFLICT DO NOTHING;
 
@@ -6831,7 +6831,7 @@ unnest(ARRAY[
   ROW('attention feels manageable', 0.8),       -- 129
   ROW('focus feels under control', 0.8)
   
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_focus_control'
 ON CONFLICT DO NOTHING;
 
@@ -6982,7 +6982,7 @@ unnest(ARRAY[
   ROW('focus still shaky', 0.76),                   -- 138
   ROW('attention not regained', 0.76),             -- 139
   ROW('thoughts still taking over', 0.75)          -- 140
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_focus_control'
 ON CONFLICT DO NOTHING;
 
@@ -7133,7 +7133,7 @@ unnest(ARRAY[
   ROW('attention can stabilize over time', 0.77),        -- 138
   ROW('it is okay to continue gently', 0.77),             -- 139
   ROW('try allowing focus to return naturally', 0.76)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_focus_control'
 ON CONFLICT DO NOTHING;
 
@@ -7283,7 +7283,7 @@ unnest(ARRAY[
   ROW('write to feel lighter mentally', 0.77),    -- 138
   ROW('write to release inner pressure', 0.77),   -- 139
   ROW('write to see emotions clearly', 0.76)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_emotion_journal'
 ON CONFLICT DO NOTHING;
 
@@ -7434,7 +7434,7 @@ unnest(ARRAY[
   ROW('mood feels softer', 0.77),                  -- 138
   ROW('less emotional confusion inside', 0.77),  -- 139
   ROW('writing brings balance', 0.76)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_emotion_journal'
 ON CONFLICT DO NOTHING;
 
@@ -7587,7 +7587,7 @@ unnest(ARRAY[
   ROW('not ready to face feelings', 0.95),              -- 140
   ROW('journaling doesnt feel right', 0.9),             -- 141
   ROW('writing doesnt help clarify emotions', 0.9)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_emotion_journal'
 ON CONFLICT DO NOTHING;
 
@@ -7743,7 +7743,7 @@ unnest(ARRAY[
   ROW('starting is often the hardest part', 0.95),                                      -- 141
   ROW('writing is a first step toward understanding', 0.95)
   
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_emotion_journal'
 ON CONFLICT DO NOTHING;
 
@@ -7898,7 +7898,7 @@ unnest(ARRAY[
   ROW('hurting myself with thoughts', 1.0),            -- 143
   ROW('harsh inner voice', 1.0)
 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_letter_self'
 ON CONFLICT DO NOTHING;
 
@@ -8049,7 +8049,7 @@ unnest(ARRAY[
   ROW('I feel a bit more relaxed', 1.0),                       -- 68
   ROW('writing helped me process things better', 1.0),          -- 69
   ROW('I feel lighter overall', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_letter_self'
 ON CONFLICT DO NOTHING;
 
@@ -8200,7 +8200,7 @@ unnest(ARRAY[
   ROW('writing didn’t really help this time', 1.0),            -- 68
   ROW('I still feel unresolved', 1.0),                          -- 69
   ROW('this didn’t help me feel better yet', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_letter_self'
 ON CONFLICT DO NOTHING;
 
@@ -8351,7 +8351,7 @@ unnest(ARRAY[
   ROW('write what feels right right now', 0.9),                  -- 68
   ROW('take a breath and start when ready', 0.85),               -- 69
   ROW('we can check in again after you write', 0.85) 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_letter_self'
 ON CONFLICT DO NOTHING;
 ---------
@@ -8501,7 +8501,7 @@ unnest(ARRAY[
   ROW('muscles feel overworked', 0.9),              -- 139
   ROW('body feels locked up', 1.0)
 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_body_scan'
 ON CONFLICT DO NOTHING;
 
@@ -8580,8 +8580,8 @@ unnest(ARRAY[
   ROW('thấy ổn hơn về mặt cơ thể', 0.8),     -- 67
   ROW('cảm giác dễ chịu dần', 0.8),          -- 68
   ROW('cơ thể có vẻ dịu hơn', 0.8),            -- 69
-  ROW('thấy thư giãn rõ hơn', 0.8),
-]::text_weight[]) AS t(kw text, wt numeric)
+  ROW('thấy thư giãn rõ hơn', 0.8)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_body_scan'
 ON CONFLICT DO NOTHING;
 
@@ -8732,7 +8732,7 @@ unnest(ARRAY[
   ROW('does not feel improved', 0.75),                -- 138
   ROW('body still feels tired', 0.75),                -- 139
   ROW('does not feel helpful', 0.75)  
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_body_scan'
 ON CONFLICT DO NOTHING;
 
@@ -8893,7 +8893,7 @@ unnest(ARRAY[
   ROW('let this moment flow', 0.75),                     -- 148
   ROW('stay still a little longer', 0.75),               -- 149
   ROW('there is no need to rush the end', 0.75)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_body_scan'
 ON CONFLICT DO NOTHING;
 
@@ -9056,7 +9056,7 @@ unnest(ARRAY[
   ROW('need sustainable routine', 0.8),            -- 148
   ROW('want long term self care', 0.8),             -- 149
   ROW('need to rebuild routine', 0.8)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_selfcare_plan'
 ON CONFLICT DO NOTHING;
 
@@ -9135,7 +9135,7 @@ unnest(ARRAY[
   ROW('có cảm giác an tâm về bản thân', 0.9), -- 67
   ROW('thấy mình được đối xử tốt hơn', 0.9),  -- 68
   ROW('biết yêu cầu bản thân nghỉ ngơi', 0.9), -- 69
-  ROW('cảm giác bản thân được ưu tiên', 1.0)
+  ROW('cảm giác bản thân được ưu tiên', 1.0),
 
   ROW('vẫn chưa chăm sóc bản thân', 0.8),
   ROW('feel more taken care of', 1.0),                 -- 1
@@ -9208,7 +9208,7 @@ unnest(ARRAY[
   ROW('feel like I am not being ignored', 0.95),       -- 68
   ROW('feel like I am a priority', 1.0),               -- 69
   ROW('feel properly taken care of', 1.0) 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_selfcare_plan'
 ON CONFLICT DO NOTHING;
 
@@ -9358,7 +9358,7 @@ unnest(ARRAY[
   ROW('still feel very exhausted', 1.0),              -- 68
   ROW('everything still feels heavy', 1.0),           -- 69
   ROW('do not feel emotionally cared for', 1.0) 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_selfcare_plan'
 ON CONFLICT DO NOTHING;
 
@@ -9522,7 +9522,7 @@ unnest(ARRAY[
   ROW('you are allowed to adjust', 1.0),                 -- 69
   ROW('this can always be flexible', 1.0)  
   
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='exercise_selfcare_plan'
 ON CONFLICT DO NOTHING;
 
@@ -9676,7 +9676,7 @@ unnest(ARRAY[
   ROW('want to message a trusted friend', 0.75),   -- 69
   ROW('want to talk to a friend for reassurance', 0.75)
   
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_message_friend'
 ON CONFLICT DO NOTHING;
 
@@ -9827,7 +9827,7 @@ unnest(ARRAY[
   ROW('feel emotionally okay', 0.75),             -- 68
   ROW('feel less emotionally burdened', 0.75),   -- 69
   ROW('feel more emotionally at ease', 0.75)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_message_friend'
 ON CONFLICT DO NOTHING;
 
@@ -9977,7 +9977,7 @@ unnest(ARRAY[
   ROW('still feel isolated inside', 1.0),            -- 68
   ROW('do not feel helped by talking', 1.0),          -- 69
   ROW('still feel alone despite reaching out', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_message_friend'
 ON CONFLICT DO NOTHING;
 
@@ -10128,7 +10128,7 @@ unnest(ARRAY[
   ROW('you do not have to do this by yourself', 0.8),           -- 68
   ROW('looking for someone to talk to is okay', 0.8),           -- 69
   ROW('you deserve support too', 0.8)               
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='tip_message_friend'
 ON CONFLICT DO NOTHING;
 
@@ -10327,7 +10327,7 @@ unnest(ARRAY[
   ROW('need someone to hear my feelings',1.0), -- -83
   ROW('want support from others',0.95),        -- -84
   ROW('wish I had someone to lean on',0.95)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_social_support'
 ON CONFLICT DO NOTHING;
 
@@ -10524,7 +10524,7 @@ unnest(ARRAY[
   ROW('having someone listen reduced stress',1.0),-- -83
   ROW('felt supported and heard',1.0),        -- -84
   ROW('sharing made a real difference',1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_social_support'
 ON CONFLICT DO NOTHING;
 
@@ -10721,7 +10721,7 @@ unnest(ARRAY[
   ROW('feels like facing it alone', 0.8),
   ROW('feels no one is there', 0.8),
   ROW('feels nowhere to turn', 0.8)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_social_support'
 ON CONFLICT DO NOTHING;
 
@@ -10850,7 +10850,7 @@ unnest(ARRAY[
   ROW('has anyone helped reduce stress before', 0.8),
   ROW('is emotional support available at this moment', 0.8),
   ROW('is there anyone who prevents feeling forgotten', 0.8)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_social_support'
 ON CONFLICT DO NOTHING;
 
@@ -11030,7 +11030,7 @@ unnest(ARRAY[
   ROW('need effort acknowledged', 0.8),              --83
   ROW('heavy mental burden', 0.8),                   --84
   ROW('lack of supportive feedback', 0.8)   
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='info_affirmation'
 ON CONFLICT DO NOTHING;
 
@@ -11226,7 +11226,7 @@ unnest(ARRAY[
   ROW('feels much more reassured', 1.0),             -- 84
   ROW('that feels calming overall', 1.0)
 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='info_affirmation'
 ON CONFLICT DO NOTHING;
 
@@ -11423,7 +11423,7 @@ unnest(ARRAY[
   ROW('still feels just as stressful', 1.0),         -- 83
   ROW('does not feel very helpful', 0.95),           -- 84
   ROW('that does not feel okay', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='info_affirmation'
 ON CONFLICT DO NOTHING;
 
@@ -11604,7 +11604,7 @@ unnest(ARRAY[
   ROW('does this feel reassuring overall', 1.0),        -- 83
   ROW('is there any remaining heaviness', 0.9),         -- 84
   ROW('would continuing when ready feel right', 0.85)  -- 85
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='info_affirmation'
 ON CONFLICT DO NOTHING;
 
@@ -11800,7 +11800,7 @@ unnest(ARRAY[
   ROW('no sense of lasting value', 0.9),                   -- 83
   ROW('feels insignificant personally', 1.0),             -- 84
   ROW('uncertain if value is real', 1.0) 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_value_check'
 ON CONFLICT DO NOTHING;
 
@@ -11989,7 +11989,7 @@ unnest(ARRAY[
   ROW('feels clearer direction', 0.95),                    -- 83
   ROW('recognizing something worth holding onto', 0.95),  -- 84
   ROW('feels genuine self worth', 1.0) 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_value_check'
 ON CONFLICT DO NOTHING;
 
@@ -12169,7 +12169,7 @@ unnest(ARRAY[
   ROW('lack of acknowledgment', 1.0),
   ROW('minimal personal significance', 1.0),
   ROW('existence feels unnoticed', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_value_check'
 ON CONFLICT DO NOTHING;
 
@@ -12349,7 +12349,7 @@ unnest(ARRAY[
   ROW('taking things step by step is fine', 1.0),
   ROW('there is no need to rush', 1.0),
   ROW('support is here when needed', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='question_value_check'
 ON CONFLICT DO NOTHING;
 
@@ -12444,7 +12444,7 @@ unnest(ARRAY[
   ROW('vấn đề này cần được chia sẻ với người khác', 0.85),
   ROW('tình trạng này cần sự giúp đỡ thật', 1.0),
   ROW('việc này đang trở nên nghiêm trọng', 1.0),
-  ROW('tình huống này cần hỗ trợ bằng người thật', 1.0)
+  ROW('tình huống này cần hỗ trợ bằng người thật', 1.0),
 
   ROW('need professional help', 1.0),
   ROW('need human support', 1.0),
@@ -12531,7 +12531,7 @@ unnest(ARRAY[
   ROW('this cannot wait', 1.0),
   ROW('this needs external help now', 1.0),
   ROW('this needs urgent human support', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='handoff_contact_support'
 ON CONFLICT DO NOTHING;
 
@@ -12625,7 +12625,7 @@ unnest(ARRAY[
   ROW('được công nhận và lắng nghe', 1.0),
   ROW('phản hồi hỗ trợ tích cực', 1.0),
   ROW('nhận được phản hồi kịp thời', 1.0),
-  ROW('không còn cảm thấy cô đơn', 1.0)
+  ROW('không còn cảm thấy cô đơn', 1.0),
 
   ROW('contacted someone', 1.0),
   ROW('reached out to someone', 1.0),
@@ -12712,7 +12712,7 @@ unnest(ARRAY[
   ROW('help response was positive', 1.0),
   ROW('support response was quick', 1.0),
   ROW('no longer isolated', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='handoff_contact_support'
 ON CONFLICT DO NOTHING;
 
@@ -12806,7 +12806,7 @@ unnest(ARRAY[
   ROW('chưa đảm bảo được hỗ trợ', 1.0),
   ROW('vẫn chưa có ai giúp', 1.0),
   ROW('không tìm được hỗ trợ hiệu quả', 1.0),
-  ROW('nỗ lực tìm hỗ trợ không thành', 1.0)
+  ROW('nỗ lực tìm hỗ trợ không thành', 1.0),
 
   ROW('could not reach anyone', 1.0),
   ROW('no response from support', 1.0),
@@ -12893,7 +12893,7 @@ unnest(ARRAY[
   ROW('still without help', 1.0),
   ROW('no effective support found', 1.0),
   ROW('help attempt unsuccessful', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='handoff_contact_support'
 ON CONFLICT DO NOTHING;
 
@@ -12982,7 +12982,7 @@ unnest(ARRAY[
   ROW('xem có điều gì cần điều chỉnh không', 0.85),
   ROW('kiểm tra xem áp lực có giảm không', 0.85),
   ROW('xem hỗ trợ hiện tại có còn phù hợp không', 0.85),
-  ROW('chỉ muốn xác nhận là hiện tại vẫn ổn', 0.85)
+  ROW('chỉ muốn xác nhận là hiện tại vẫn ổn', 0.85),
 
   ROW('checking in to see how things are going now', 1.0),
   ROW('just making sure things feel a bit steadier', 1.0),
@@ -13064,7 +13064,7 @@ unnest(ARRAY[
   ROW('seeing whether things feel less pressured', 0.85),
   ROW('checking whether support still feels right now', 0.85),
   ROW('just confirming things feel okay at this moment', 0.85)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='handoff_contact_support'
 ON CONFLICT DO NOTHING;
 
@@ -13092,7 +13092,7 @@ unnest(ARRAY[
   ROW('không có lựa chọn giúp đỡ nào', 0.85),
   ROW('không có hỗ trợ cá nhân khả dụng', 0.85),
   ROW('không có hỗ trợ trực tiếp bên ngoài', 0.85),
-  ROW('không có ai để liên hệ bên ngoài', 0.85)
+  ROW('không có ai để liên hệ bên ngoài', 0.85),
   ROW('hotline', 1.0),
   ROW('số điện thoại hỗ trợ', 0.9),
   ROW('liên hệ chuyên gia', 0.8),
@@ -13180,7 +13180,7 @@ unnest(ARRAY[
   ROW('thiếu hỗ trợ ở mức nghiêm trọng', 1.0),
   ROW('cần hỗ trợ khẩn cấp', 1.0),
   ROW('không có phương án hỗ trợ khả thi', 1.0),
-  ROW('tình huống cần đến đường dây nóng', 1.0)
+  ROW('tình huống cần đến đường dây nóng', 1.0),
 
   ROW('no one else can be contacted', 0.85),
   ROW('no one else is available', 0.85),
@@ -13201,7 +13201,7 @@ unnest(ARRAY[
   ROW('no help option available', 0.85),
   ROW('no personal help available', 0.85),
   ROW('no support available offline', 0.85),
-  ROW('no one to contact outside', 0.85)
+  ROW('no one to contact outside', 0.85),
   ROW('support options exhausted', 1.0),
   ROW('nothing is helping anymore', 1.0),
   ROW('current support not working', 1.0),
@@ -13288,7 +13288,7 @@ unnest(ARRAY[
   ROW('no viable support option', 1.0),
   ROW('situation requires hotline help', 1.0)
 
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='handoff_hotline'
 ON CONFLICT DO NOTHING;
 
@@ -13469,7 +13469,7 @@ unnest(ARRAY[
   ROW('support achieved desired outcome', 1.0),
   ROW('safety restored after contact', 1.0),
   ROW('support interaction resolved crisis', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='handoff_hotline'
 ON CONFLICT DO NOTHING;
 
@@ -13651,7 +13651,7 @@ unnest(ARRAY[
   ROW('safety not ensured', 1.0),
   ROW('no secure support found', 1.0),
   ROW('still at risk', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='handoff_hotline'
 ON CONFLICT DO NOTHING;
 
@@ -13832,7 +13832,7 @@ unnest(ARRAY[
   ROW('this conversation can continue', 1.0),
   ROW('returning here is always okay', 1.0),
   ROW('remaining available for support', 1.0)
-]::text_weight[]) AS t(kw text, wt numeric)
+]::text_weight[]) AS t(kw, wt)
 WHERE a.slug='handoff_hotline'
 ON CONFLICT DO NOTHING;
 

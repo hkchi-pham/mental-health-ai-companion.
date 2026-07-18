@@ -111,3 +111,39 @@ CREATE TABLE IF NOT EXISTS emotion_need_action_map (
   created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE (emotion_id, need_id, action_id)
 );
+
+-- ---------------------------------------------------------------------------
+-- id defaults: the application normally supplies UUIDs from Python
+-- (default_factory), so the id PKs were created without a DB default. The raw
+-- SQL seed (migration/seed/seed.sql) INSERTs by slug and omits id, which fails
+-- the NOT NULL PK constraint. Backfill a DB-level default so the seed loads and
+-- as a harmless safety net for any raw-SQL writer. Idempotent: SET DEFAULT is
+-- always safe to re-run; the app still supplies its own id when it inserts.
+-- ---------------------------------------------------------------------------
+ALTER TABLE emotions                ALTER COLUMN id SET DEFAULT gen_random_uuid()::text;
+ALTER TABLE emotion_keywords        ALTER COLUMN id SET DEFAULT gen_random_uuid()::text;
+ALTER TABLE needs                   ALTER COLUMN id SET DEFAULT gen_random_uuid()::text;
+ALTER TABLE need_keywords           ALTER COLUMN id SET DEFAULT gen_random_uuid()::text;
+ALTER TABLE emotion_need_links      ALTER COLUMN id SET DEFAULT gen_random_uuid()::text;
+ALTER TABLE actions                 ALTER COLUMN id SET DEFAULT gen_random_uuid()::text;
+ALTER TABLE action_patterns         ALTER COLUMN id SET DEFAULT gen_random_uuid()::text;
+ALTER TABLE emotion_need_action_map ALTER COLUMN id SET DEFAULT gen_random_uuid()::text;
+
+-- created_at defaults: some pre-existing tables were created without the
+-- DEFAULT NOW() this migration declares, and the seed omits created_at. Backfill
+-- the timestamp default so the seed loads. Idempotent — no-op where it exists.
+ALTER TABLE emotions                ALTER COLUMN created_at SET DEFAULT NOW();
+ALTER TABLE emotion_keywords        ALTER COLUMN created_at SET DEFAULT NOW();
+ALTER TABLE needs                   ALTER COLUMN created_at SET DEFAULT NOW();
+ALTER TABLE need_keywords           ALTER COLUMN created_at SET DEFAULT NOW();
+ALTER TABLE emotion_need_links      ALTER COLUMN created_at SET DEFAULT NOW();
+ALTER TABLE actions                 ALTER COLUMN created_at SET DEFAULT NOW();
+ALTER TABLE action_patterns         ALTER COLUMN created_at SET DEFAULT NOW();
+ALTER TABLE emotion_need_action_map ALTER COLUMN created_at SET DEFAULT NOW();
+
+-- active defaults: pre-existing tables were created without the DEFAULT TRUE
+-- this migration declares, and the seed omits active. Backfill idempotently.
+ALTER TABLE emotions                ALTER COLUMN active SET DEFAULT TRUE;
+ALTER TABLE needs                   ALTER COLUMN active SET DEFAULT TRUE;
+ALTER TABLE emotion_need_links      ALTER COLUMN active SET DEFAULT TRUE;
+ALTER TABLE actions                 ALTER COLUMN active SET DEFAULT TRUE;
