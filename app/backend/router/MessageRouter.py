@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlmodel import Session
+from sqlmodel import Session, select, func
 from typing import List
 from config.database import get_db
 from backend.crud import MessageCrud
+from backend.models.MessageModel import MessageModel
 from backend.response.MessageResponse import (
     MessageCreate,
     MessageRead,
@@ -268,11 +269,24 @@ async def chat_with_ai(
 
             # 7. Lookup curated action if streak fires
             if streak_mood:
+                # Stage bucketing needs true conversation depth (user + AI turns).
+                # chat_history here is user-only — get_messages_by_convo filters on
+                # sender_id == user_id, so AI replies are excluded and len(chat_history)
+                # under-counts depth by ~half, pushing the stage a bucket too low.
+                # Count all non-deleted messages in the conversation instead.
+                total_message_count = session.exec(
+                    select(func.count())
+                    .select_from(MessageModel)
+                    .where(
+                        MessageModel.conversation_id == data.conversation_id,
+                        MessageModel.deleted_at.is_(None),
+                    )
+                ).one()
                 action_ctx = lookup_curated_action(
                     session,
                     streak_mood,
                     emotion.confidence,
-                    message_count=len(chat_history),
+                    message_count=total_message_count,
                     exclude_slugs=set(exclude_slugs),
                 )
 
