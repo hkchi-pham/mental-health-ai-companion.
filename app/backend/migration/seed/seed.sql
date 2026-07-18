@@ -3723,7 +3723,7 @@ INSERT INTO actions (slug, name, description, type, level, stage_min, stage_max,
   prompt_template, expected_outcomes, preconditions, postconditions, cooldown_seconds, max_repeats, domain)
 VALUES
   ('handoff_contact_support', 'Liên hệ hỗ trợ', 'Gợi ý người dùng tìm hỗ trợ an toàn', 
-   'handoff', 3, 2, 3, 'Bạn có thể gọi cho người thân hoặc c\huyên gia khi thấy quá tải.', 
+   'handoff', 3, 2, 3, 'Bạn có thể gọi cho người thân hoặc chuyên gia khi thấy quá tải.',
    'Tăng cảm giác an toàn và được giúp đỡ', 
    '{"emotion":"fearful"}', '{"emotion":"safe"}', 
    0, 10, 'safety'),
