@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from typing import List
 
-from sqlalchemy import Column
+from sqlalchemy import Column, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field
 
@@ -40,5 +40,5 @@ class SuggestionStateModel(BaseModel, table=True):
     # in-place) to have the change detected — see Phase 11 lesson.
     shown_slugs: List[str] = Field(
         default=[],
-        sa_column=Column(JSONB, nullable=False, server_default="'[]'::jsonb"),
+        sa_column=Column(JSONB, nullable=False, server_default=text("'[]'::jsonb")),
     )
