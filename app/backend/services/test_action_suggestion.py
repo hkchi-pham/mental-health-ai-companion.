@@ -219,3 +219,44 @@ def test_pick_stage_boundary_inclusive():
     # one above stage_max
     r3 = _pick_best_row(rows, confidence=0.8, stage=3, exclude_slugs=set())
     assert r3 is None
+
+
+# ---------------------------------------------------------------------------
+# Test Group 5: _pick_best_row — severity gate + gentleness preference
+# ---------------------------------------------------------------------------
+
+def test_pick_excludes_handoff_for_non_high_risk():
+    """A crisis handoff action is skipped when the emotion is not high-risk;
+    a gentler non-handoff action is chosen instead (buồn = medium risk)."""
+    rows = [
+        {**_row(need_strength=0.9, action_type="handoff", action_slug="handoff-crisis"),
+         "level": 3, "risk_level": "medium"},
+        {**_row(need_strength=0.9, action_type="question", action_slug="gentle-question"),
+         "level": 2, "risk_level": "medium"},
+    ]
+    result = _pick_best_row(rows, confidence=0.85, stage=2, exclude_slugs=set())
+    assert result is not None
+    assert result["action_slug"] == "gentle-question"
+
+
+def test_pick_allows_handoff_for_high_risk():
+    """A handoff action DOES qualify when the emotion is high-risk."""
+    rows = [
+        {**_row(need_strength=0.9, action_type="handoff", action_slug="handoff-crisis"),
+         "level": 3, "risk_level": "high"},
+    ]
+    result = _pick_best_row(rows, confidence=0.85, stage=2, exclude_slugs=set())
+    assert result is not None
+    assert result["action_slug"] == "handoff-crisis"
+
+
+def test_pick_prefers_lower_level_action():
+    """Among qualifying non-handoff rows, the gentlest (lowest level) wins,
+    even against a higher-need higher-level action — 'start gentle'."""
+    rows = [
+        {**_row(need_strength=0.9, action_slug="intense"), "level": 3, "risk_level": "low"},
+        {**_row(need_strength=0.5, action_slug="gentle"), "level": 1, "risk_level": "low"},
+    ]
+    result = _pick_best_row(rows, confidence=0.8, stage=2, exclude_slugs=set())
+    assert result is not None
+    assert result["action_slug"] == "gentle"

@@ -121,13 +121,20 @@ def _pick_best_row(
       1. Skip rows where confidence < row["min_confidence"].
       2. Skip rows where stage is outside [row["stage_min"], row["stage_max"]].
       3. Skip rows whose action_slug is in exclude_slugs.
-      4. Among remaining rows, sort by need_strength DESC, then min_confidence
-         DESC, and return the first element.
+      4. Skip crisis-escalation actions (type == "handoff") UNLESS the emotion's
+         risk_level is "high" — a "contact professional support" prompt is only
+         appropriate for high-risk moods (e.g. sợ_hãi / tức_giận), never as the
+         default for a mild/medium mood like buồn.
+      5. Among remaining rows, prefer the GENTLEST appropriate action: sort by
+         action level ASC (low = gentle), then need_strength DESC, then
+         min_confidence DESC, and return the first element.
 
     Args:
         rows:          Candidate rows, each a dict with keys: need_strength,
                        min_confidence, stage_min, stage_max, action_slug, name,
-                       description, type, prompt_template.
+                       description, type, prompt_template. Optional keys used
+                       when present: level (action intensity 1–5, default 3),
+                       risk_level (emotion risk low/medium/high, default "low").
         confidence:    Detected mood confidence in [0, 1].
         stage:         Current conversation stage (1, 2, or 3).
         exclude_slugs: Set of action slugs already shown (cooldown / variety).
@@ -135,18 +142,26 @@ def _pick_best_row(
     Returns:
         The best-matching row dict, or None if no row qualifies.
     """
+    def _severity_ok(r: Dict[str, Any]) -> bool:
+        # Reserve handoff-type (crisis escalation) for high-risk emotions only.
+        if r.get("type") == "handoff":
+            return str(r.get("risk_level", "low")).lower() == "high"
+        return True
+
     candidates = [
         r for r in rows
         if (
             confidence >= r["min_confidence"]
             and r["stage_min"] <= stage <= r["stage_max"]
             and r["action_slug"] not in exclude_slugs
+            and _severity_ok(r)
         )
     ]
     if not candidates:
         return None
-    # Primary sort: strongest need (DESC); tiebreak: highest min_confidence (DESC)
-    candidates.sort(key=lambda r: (r["need_strength"], r["min_confidence"]), reverse=True)
+    # Prefer the gentlest appropriate action: lowest level first, then strongest
+    # need, then highest confidence bar. (level ASC, need_strength DESC, min_confidence DESC)
+    candidates.sort(key=lambda r: (r.get("level", 3), -r["need_strength"], -r["min_confidence"]))
     return candidates[0]
 
 
@@ -166,10 +181,12 @@ SELECT
     m.min_confidence,
     m.stage_min,
     m.stage_max,
+    e.risk_level,
     a.slug        AS action_slug,
     a.name,
     a.description,
     a.type,
+    a.level,
     a.prompt_template
 FROM emotions e
 JOIN emotion_need_links   l ON l.emotion_id = e.id
