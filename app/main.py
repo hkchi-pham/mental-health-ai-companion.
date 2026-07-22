@@ -28,9 +28,16 @@ allowed_origins = [o.strip() for o in _origins_env.split(",") if o.strip()] or [
     "http://127.0.0.1:3000",
 ]
 
+# Dev convenience: Flutter web (`flutter run -d chrome`) picks a RANDOM localhost
+# port each run (e.g. :9100), which would otherwise fail CORS. Allow any
+# localhost / 127.0.0.1 port via regex so local web dev always works. Explicit
+# allowed_origins above still cover non-localhost (prod) origins.
+_LOCALHOST_ORIGIN_REGEX = r"https?://(localhost|127\.0\.0\.1)(:\d+)?"
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
+    allow_origin_regex=_LOCALHOST_ORIGIN_REGEX,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
